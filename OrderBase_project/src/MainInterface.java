@@ -23,6 +23,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+
+import java.awt.desktop.SystemEventListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
@@ -130,7 +132,22 @@ public class MainInterface {
         stackPaneOrders.setPrefWidth(mainScene.getWidth());
         stackPaneOrders.getChildren().addAll(tableViewOrders);
         refreshOrdersList();
-        vBox.getChildren().addAll(getSortButtons(), getSearchBox(), stackPaneOrders, new Separator(), hBoxPositionsAndClient);
+
+        Button testBtn = new Button("test");
+        testBtn.setOnAction(event ->
+        {
+            if(DataBaseSQLite.testConnection())
+            {
+                System.out.println("тест соединения с sqlite успешен");
+
+            }
+            else
+            {
+                System.out.println("тетс соединения с sqlite неуспешен");
+            }
+        });
+
+        vBox.getChildren().addAll(testBtn, getSortButtons(), getSearchBox(), stackPaneOrders, new Separator(), hBoxPositionsAndClient);
         borderPaneCenter.setCenter(vBox);
         return borderPaneCenter;
     }
@@ -239,6 +256,7 @@ public class MainInterface {
 
         return hBox;
     }
+
     HBox getSearchBox(){
         HBox searchHBox = new HBox();
         searchHBox.setSpacing(10);

@@ -35,15 +35,15 @@
     <session id="1305210877">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="265" />
+          <entry key="project.closed" value="281" />
           <entry key="project.open.time.1" value="1" />
-          <entry key="project.open.time.10" value="43" />
-          <entry key="project.open.time.11" value="59" />
-          <entry key="project.open.time.12" value="33" />
-          <entry key="project.open.time.13" value="28" />
-          <entry key="project.open.time.14" value="7" />
+          <entry key="project.open.time.10" value="46" />
+          <entry key="project.open.time.11" value="61" />
+          <entry key="project.open.time.12" value="40" />
+          <entry key="project.open.time.13" value="30" />
+          <entry key="project.open.time.14" value="8" />
           <entry key="project.open.time.15" value="15" />
-          <entry key="project.open.time.16" value="11" />
+          <entry key="project.open.time.16" value="12" />
           <entry key="project.open.time.17" value="8" />
           <entry key="project.open.time.18" value="7" />
           <entry key="project.open.time.19" value="7" />
@@ -58,37 +58,39 @@
           <entry key="project.open.time.7" value="1" />
           <entry key="project.open.time.8" value="2" />
           <entry key="project.open.time.9" value="18" />
-          <entry key="project.opened" value="265" />
+          <entry key="project.opened" value="281" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="class" value="4" />
+          <entry key="class" value="6" />
           <entry key="css" value="2" />
-          <entry key="java" value="26" />
+          <entry key="java" value="33" />
+          <entry key="sql" value="2" />
           <entry key="xml" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="CLASS" value="4" />
+          <entry key="CLASS" value="6" />
           <entry key="CSS" value="2" />
-          <entry key="JAVA" value="26" />
+          <entry key="JAVA" value="33" />
+          <entry key="Scratch" value="2" />
           <entry key="XML" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="class" value="1" />
-          <entry key="java" value="72229" />
+          <entry key="java" value="75739" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CLASS" value="1" />
           <entry key="CSS" value="3" />
-          <entry key="JAVA" value="72204" />
-          <entry key="SQL" value="22" />
+          <entry key="JAVA" value="75712" />
+          <entry key="SQL" value="24" />
         </counts>
       </usages-collector>
     </session>
@@ -96,70 +98,24 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Main.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1496">
-              <caret line="107" selection-start-line="107" selection-end-line="107" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="method#createAccount#0;class#Main#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/MainInterface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="737">
-              <caret line="295" column="35" lean-forward="true" selection-start-line="257" selection-start-column="3" selection-end-line="295" selection-end-column="35" />
+            <state relative-caret-position="1088">
+              <caret line="141" selection-start-line="141" selection-end-line="141" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2118#2238#0" />
-                <element signature="e#2312#3139#0" />
-                <element signature="e#3145#5651#0" />
-                <element signature="e#5657#9361#0" />
-                <element signature="e#25842#27086#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/CreateOrder.java">
+        <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10319">
-              <caret line="743" column="14" selection-start-line="743" selection-start-column="14" selection-end-line="743" selection-end-column="14" />
+            <state relative-caret-position="2924">
+              <caret line="191" column="17" selection-start-line="191" selection-start-column="17" selection-end-line="191" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="method#changeTablePositionsList#0;class#CreateOrder#0" />
-                <element signature="method#createClient#0;class#CreateOrder#0" />
-                <element signature="method#getConverter#0;class#CreateOrder#0" />
-                <element signature="class#Issue#0;class#CreateOrder#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/AutoCompleteComboBoxListener.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="31" column="26" selection-start-line="31" selection-start-column="26" selection-end-line="31" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/OrdersPosition.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="15" column="21" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="21" />
-              <folding>
-                <element signature="e#1222#1223#0" expanded="true" />
-                <element signature="e#1258#1259#0" expanded="true" />
-                <element signature="e#1288#1289#0" expanded="true" />
-                <element signature="e#1317#1318#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -168,8 +124,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/DatabaseHelper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="799">
-              <caret line="59" selection-start-line="58" selection-start-column="8" selection-end-line="59" />
+            <state relative-caret-position="675">
+              <caret line="225" column="30" selection-start-line="225" selection-start-column="22" selection-end-line="225" selection-end-column="30" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#testConnection#0;class#DataBaseHelper#0" />
@@ -179,21 +135,101 @@
                 <element signature="method#deleteClientFromDB#0;class#DataBaseHelper#0" />
                 <element signature="method#addDate#0;class#DataBaseHelper#0" />
                 <element signature="method#getDate#0;class#DataBaseHelper#0" />
-                <element signature="method#getStaffs#0;class#DataBaseHelper#0" />
                 <element signature="method#addStaffToDB#0;class#DataBaseHelper#0" />
                 <element signature="method#deleteStaffFromDB#0;class#DataBaseHelper#0" />
-                <element signature="method#editOrder#0;class#DataBaseHelper#0" />
-                <element signature="method#deleteOrderFromDB#0;class#DataBaseHelper#0" />
-                <element signature="method#getOrderFromDB#0;class#DataBaseHelper#0" />
                 <element signature="method#getOrdersPositions#0;class#DataBaseHelper#0" />
                 <element signature="method#getPositionsFromOrder#0;class#DataBaseHelper#0" />
                 <element signature="method#setAvailabilityOrders#0;class#DataBaseHelper#0" />
-                <element signature="method#getAccountsList#0;class#DataBaseHelper#0" />
-                <element signature="method#getAccount#0;class#DataBaseHelper#0" />
                 <element signature="method#addAccountToDB#0;class#DataBaseHelper#0" />
                 <element signature="method#getCount#0;class#DataBaseHelper#0" />
                 <element signature="method#setCount#0;class#DataBaseHelper#0" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/DataBaseSQLite.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3264">
+              <caret line="390" column="16" selection-start-line="390" selection-start-column="16" selection-end-line="390" selection-end-column="16" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="method#setClientsToSQLiteDB#0;class#DataBaseSQLite#0" />
+                <element signature="method#setAccountsToSQLiteDB#0;class#DataBaseSQLite#0" />
+                <element signature="method#getClientsList#0;class#DataBaseSQLite#0" />
+                <element signature="method#editClientToDB#0;class#DataBaseSQLite#0" />
+                <element signature="method#getClient#0;class#DataBaseSQLite#0" />
+                <element signature="method#deleteClientFromDB#0;class#DataBaseSQLite#0" />
+                <element signature="method#addDate#0;class#DataBaseSQLite#0" />
+                <element signature="method#getStaffs#0;class#DataBaseSQLite#0" />
+                <element signature="method#deleteStaffFromDB#0;class#DataBaseSQLite#0" />
+                <element signature="method#getOrdersPositions#0;class#DataBaseSQLite#0" />
+                <element signature="method#getPositionsFromOrder#0;class#DataBaseSQLite#0" />
+                <element signature="method#setAvailabilityOrders#0;class#DataBaseSQLite#0" />
+                <element signature="method#setPaymentOrders#0;class#DataBaseSQLite#0" />
+                <element signature="method#getCount#0;class#DataBaseSQLite#0" />
+                <element signature="method#setCount#0;class#DataBaseSQLite#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/OrdersPosition.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="27" column="5" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
+              <folding>
+                <element signature="e#716#717#0" expanded="true" />
+                <element signature="e#746#747#0" expanded="true" />
+                <element signature="e#773#774#0" expanded="true" />
+                <element signature="e#799#800#0" expanded="true" />
+                <element signature="e#844#845#0" expanded="true" />
+                <element signature="e#884#885#0" expanded="true" />
+                <element signature="e#916#917#0" expanded="true" />
+                <element signature="e#947#948#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Order.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="8" column="14" selection-start-line="8" selection-start-column="14" selection-end-line="8" selection-end-column="14" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#5629#5630#0" expanded="true" />
+                <element signature="e#5681#5682#0" expanded="true" />
+                <element signature="e#5744#5745#0" expanded="true" />
+                <element signature="e#5792#5793#0" expanded="true" />
+                <element signature="e#7695#7696#0" expanded="true" />
+                <element signature="e#7732#7733#0" expanded="true" />
+                <element signature="e#7778#7779#0" expanded="true" />
+                <element signature="e#7813#7814#0" expanded="true" />
+                <element signature="e#7867#7868#0" expanded="true" />
+                <element signature="e#7910#7911#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Staff.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="19" selection-start-line="19" selection-end-line="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Account.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="544">
+              <caret line="46" column="5" selection-start-line="46" selection-start-column="5" selection-end-line="46" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -209,9 +245,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>system.ou</find>
-      <find>refre</find>
-      <find>textFi</find>
       <find>т</find>
       <find>у</find>
       <find>ф</find>
@@ -239,6 +272,9 @@
       <find>swi</find>
       <find>testCombobox</find>
       <find>test</find>
+      <find>getClie</find>
+      <find>менедж</find>
+      <find>0</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -250,16 +286,17 @@
         <option value="$PROJECT_DIR$/src/Staff.java" />
         <option value="$PROJECT_DIR$/src/TextAreaTableCell.java" />
         <option value="$PROJECT_DIR$/src/OrderPane.java" />
-        <option value="$PROJECT_DIR$/src/Account.java" />
-        <option value="$PROJECT_DIR$/src/OrdersPosition.java" />
-        <option value="$PROJECT_DIR$/src/Order.java" />
         <option value="$PROJECT_DIR$/src/Client.java" />
-        <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/Print.java" />
-        <option value="$PROJECT_DIR$/src/MainInterface.java" />
-        <option value="$PROJECT_DIR$/src/DatabaseHelper.java" />
         <option value="$PROJECT_DIR$/src/CreateOrder.java" />
         <option value="$PROJECT_DIR$/src/AutoCompleteComboBoxListener.java" />
+        <option value="$PROJECT_DIR$/src/Account.java" />
+        <option value="$PROJECT_DIR$/src/OrdersPosition.java" />
+        <option value="$PROJECT_DIR$/src/DatabaseHelper.java" />
+        <option value="$PROJECT_DIR$/src/Order.java" />
+        <option value="$PROJECT_DIR$/src/Main.java" />
+        <option value="$PROJECT_DIR$/src/DataBaseSQLite.java" />
+        <option value="$PROJECT_DIR$/src/MainInterface.java" />
       </list>
     </option>
   </component>
@@ -276,8 +313,8 @@
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-4" />
-    <option name="y" value="48" />
+    <option name="x" value="2" />
+    <option name="y" value="92" />
     <option name="width" value="1277" />
     <option name="height" value="892" />
   </component>
@@ -306,8 +343,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -329,6 +366,18 @@
             <path>
               <item name="OrderBase_project" type="b2602c69:ProjectViewProjectNode" />
               <item name="OrderBase_project" type="462c0819:PsiDirectoryNode" />
+              <item name=".idea" type="462c0819:PsiDirectoryNode" />
+              <item name="dataSources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OrderBase_project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OrderBase_project" type="462c0819:PsiDirectoryNode" />
+              <item name=".idea" type="462c0819:PsiDirectoryNode" />
+              <item name="libraries" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OrderBase_project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OrderBase_project" type="462c0819:PsiDirectoryNode" />
               <item name="out" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -348,6 +397,12 @@
               <item name="OrderBase_project" type="b2602c69:ProjectViewProjectNode" />
               <item name="OrderBase_project" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OrderBase_project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OrderBase_project" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="db" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="OrderBase_project" type="b2602c69:ProjectViewProjectNode" />
@@ -368,11 +423,15 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="sqlite" />
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1596151565285" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ExpertPrint Montage" />
-    <property name="project.structure.last.edited" value="Facets" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1598594089750" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../sqlite-jdbc-3.31.1.jar!/" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2632184" />
   </component>
@@ -680,16 +739,33 @@
       <workItem from="1596411842793" duration="1766000" />
       <workItem from="1596413807288" duration="507000" />
       <workItem from="1596598613904" duration="658000" />
+      <workItem from="1598589581952" duration="2032000" />
+      <workItem from="1598591649003" duration="1783000" />
+      <workItem from="1598593539744" duration="1108000" />
+      <workItem from="1598595475050" duration="1779000" />
+      <workItem from="1598597299005" duration="763000" />
+      <workItem from="1598835852107" duration="1569000" />
+      <workItem from="1598837664294" duration="1778000" />
+      <workItem from="1598839478080" duration="761000" />
+      <workItem from="1598843039944" duration="1633000" />
+      <workItem from="1598844896826" duration="1783000" />
+      <workItem from="1598846713965" duration="1533000" />
+      <workItem from="1598849766659" duration="1272000" />
+      <workItem from="1598852308291" duration="1346000" />
+      <workItem from="1598854080179" duration="1109000" />
+      <workItem from="1598855952389" duration="1311000" />
+      <workItem from="1598920675216" duration="1178000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="421381000" />
+    <option name="totallyTimeSpent" value="444119000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="13" y="48" width="1260" height="892" extended-state="1" />
+    <frame x="2" y="92" width="1277" height="892" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4990366" visible="true" weight="0.23" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4990366" visible="true" weight="0.2481512" />
       <window_info id="Structure" order="1" sideWeight="0.5009634" side_tool="true" weight="0.19338843" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -704,8 +780,8 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Database Changes" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32894737" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.32894737" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -713,7 +789,7 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
-      <window_info anchor="right" id="Database" order="5" />
+      <window_info anchor="right" id="Database" order="5" weight="0.32949877" />
       <window_info anchor="right" id="Theme Preview" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Maven Projects" order="8" weight="0.32975206" />
@@ -797,13 +873,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Staff.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/OrderPane.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="448">
@@ -838,13 +907,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Account.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="23" column="5" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk-10.0.2/lib/src.zip!/java.base/java/lang/Thread.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="164">
@@ -853,9 +915,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/out/production/OrderBase_project/Client.class">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/out/production/OrderBase_project/DataBaseHelper.class">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Client.java">
@@ -868,13 +927,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Order.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/out/production/OrderBase_project/CreateOrder.class">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -884,17 +936,6 @@
           <caret line="397" selection-start-line="397" selection-end-line="397" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1496">
-          <caret line="107" selection-start-line="107" selection-end-line="107" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#createAccount#0;class#Main#0" />
           </folding>
         </state>
       </provider>
@@ -913,23 +954,100 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/AutoCompleteComboBoxListener.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="31" column="26" selection-start-line="31" selection-start-column="26" selection-end-line="31" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/out/production/OrderBase_project/DataBaseHelper.class">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/249af164-5674-4481-8cd6-cfcb51e0d5a4/console.sql">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/c7a66a61-f13b-45d2-a313-61647f66b69d/console.sql">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/out/production/OrderBase_project/OrdersPosition.class">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/MainInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1088">
+          <caret line="141" selection-start-line="141" selection-end-line="141" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2924">
+          <caret line="191" column="17" selection-start-line="191" selection-start-column="17" selection-end-line="191" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/OrdersPosition.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" column="21" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="21" />
+        <state relative-caret-position="391">
+          <caret line="27" column="5" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
           <folding>
-            <element signature="e#1222#1223#0" expanded="true" />
-            <element signature="e#1258#1259#0" expanded="true" />
-            <element signature="e#1288#1289#0" expanded="true" />
-            <element signature="e#1317#1318#0" expanded="true" />
+            <element signature="e#716#717#0" expanded="true" />
+            <element signature="e#746#747#0" expanded="true" />
+            <element signature="e#773#774#0" expanded="true" />
+            <element signature="e#799#800#0" expanded="true" />
+            <element signature="e#844#845#0" expanded="true" />
+            <element signature="e#884#885#0" expanded="true" />
+            <element signature="e#916#917#0" expanded="true" />
+            <element signature="e#947#948#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Order.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="8" column="14" selection-start-line="8" selection-start-column="14" selection-end-line="8" selection-end-column="14" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5629#5630#0" expanded="true" />
+            <element signature="e#5681#5682#0" expanded="true" />
+            <element signature="e#5744#5745#0" expanded="true" />
+            <element signature="e#5792#5793#0" expanded="true" />
+            <element signature="e#7695#7696#0" expanded="true" />
+            <element signature="e#7732#7733#0" expanded="true" />
+            <element signature="e#7778#7779#0" expanded="true" />
+            <element signature="e#7813#7814#0" expanded="true" />
+            <element signature="e#7867#7868#0" expanded="true" />
+            <element signature="e#7910#7911#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Staff.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Account.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="544">
+          <caret line="46" column="5" selection-start-line="46" selection-start-column="5" selection-end-line="46" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/DatabaseHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="799">
-          <caret line="59" selection-start-line="58" selection-start-column="8" selection-end-line="59" />
+        <state relative-caret-position="675">
+          <caret line="225" column="30" selection-start-line="225" selection-start-column="22" selection-end-line="225" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#testConnection#0;class#DataBaseHelper#0" />
@@ -939,17 +1057,11 @@
             <element signature="method#deleteClientFromDB#0;class#DataBaseHelper#0" />
             <element signature="method#addDate#0;class#DataBaseHelper#0" />
             <element signature="method#getDate#0;class#DataBaseHelper#0" />
-            <element signature="method#getStaffs#0;class#DataBaseHelper#0" />
             <element signature="method#addStaffToDB#0;class#DataBaseHelper#0" />
             <element signature="method#deleteStaffFromDB#0;class#DataBaseHelper#0" />
-            <element signature="method#editOrder#0;class#DataBaseHelper#0" />
-            <element signature="method#deleteOrderFromDB#0;class#DataBaseHelper#0" />
-            <element signature="method#getOrderFromDB#0;class#DataBaseHelper#0" />
             <element signature="method#getOrdersPositions#0;class#DataBaseHelper#0" />
             <element signature="method#getPositionsFromOrder#0;class#DataBaseHelper#0" />
             <element signature="method#setAvailabilityOrders#0;class#DataBaseHelper#0" />
-            <element signature="method#getAccountsList#0;class#DataBaseHelper#0" />
-            <element signature="method#getAccount#0;class#DataBaseHelper#0" />
             <element signature="method#addAccountToDB#0;class#DataBaseHelper#0" />
             <element signature="method#getCount#0;class#DataBaseHelper#0" />
             <element signature="method#setCount#0;class#DataBaseHelper#0" />
@@ -957,24 +1069,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/AutoCompleteComboBoxListener.java">
+    <entry file="file://$PROJECT_DIR$/src/DataBaseSQLite.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="31" column="26" selection-start-line="31" selection-start-column="26" selection-end-line="31" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/MainInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="737">
-          <caret line="295" column="35" lean-forward="true" selection-start-line="257" selection-start-column="3" selection-end-line="295" selection-end-column="35" />
+        <state relative-caret-position="3264">
+          <caret line="390" column="16" selection-start-line="390" selection-start-column="16" selection-end-line="390" selection-end-column="16" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2118#2238#0" />
-            <element signature="e#2312#3139#0" />
-            <element signature="e#3145#5651#0" />
-            <element signature="e#5657#9361#0" />
-            <element signature="e#25842#27086#0" />
+            <element signature="method#setClientsToSQLiteDB#0;class#DataBaseSQLite#0" />
+            <element signature="method#setAccountsToSQLiteDB#0;class#DataBaseSQLite#0" />
+            <element signature="method#getClientsList#0;class#DataBaseSQLite#0" />
+            <element signature="method#editClientToDB#0;class#DataBaseSQLite#0" />
+            <element signature="method#getClient#0;class#DataBaseSQLite#0" />
+            <element signature="method#deleteClientFromDB#0;class#DataBaseSQLite#0" />
+            <element signature="method#addDate#0;class#DataBaseSQLite#0" />
+            <element signature="method#getStaffs#0;class#DataBaseSQLite#0" />
+            <element signature="method#deleteStaffFromDB#0;class#DataBaseSQLite#0" />
+            <element signature="method#getOrdersPositions#0;class#DataBaseSQLite#0" />
+            <element signature="method#getPositionsFromOrder#0;class#DataBaseSQLite#0" />
+            <element signature="method#setAvailabilityOrders#0;class#DataBaseSQLite#0" />
+            <element signature="method#setPaymentOrders#0;class#DataBaseSQLite#0" />
+            <element signature="method#getCount#0;class#DataBaseSQLite#0" />
+            <element signature="method#setCount#0;class#DataBaseSQLite#0" />
           </folding>
         </state>
       </provider>
@@ -1038,7 +1153,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2632184" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
@@ -1046,7 +1160,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>hsqldb</last-edited>
+          <last-edited>sqlite-jdbc-3.31.1</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

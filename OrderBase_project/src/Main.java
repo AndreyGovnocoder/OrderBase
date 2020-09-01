@@ -160,20 +160,24 @@ public class Main extends Application {
         gridPaneCreateAcc.setHgap(5);
         TextField textFieldLogin = new TextField();
         TextField textFieldUserName = new TextField();
+        TextField textFieldJobPosition = new TextField();
         TextField textFieldPass = new TextField();
         TextField textFieldPassAgain = new TextField();
         Text textLogin = new Text("Введите логин: ");
         Text textUserName = new Text("Введите Ваше имя: ");
+        Text textUserPosition = new Text("Введите Вашу должность: ");
         Text textPass = new Text("Введите пароль: ");
         Text textPassAgain = new Text("Повторите пароль: ") ;
         gridPaneCreateAcc.add(textLogin, 0,0);
         gridPaneCreateAcc.add(textUserName, 0,1);
-        gridPaneCreateAcc.add(textPass, 0,2);
-        gridPaneCreateAcc.add(textPassAgain,0,3);
+        gridPaneCreateAcc.add(textUserPosition, 0,2);
+        gridPaneCreateAcc.add(textPass, 0,3);
+        gridPaneCreateAcc.add(textPassAgain,0,4);
         gridPaneCreateAcc.add(textFieldLogin, 1,0);
         gridPaneCreateAcc.add(textFieldUserName, 1,1);
-        gridPaneCreateAcc.add(textFieldPass, 1,2);
-        gridPaneCreateAcc.add(textFieldPassAgain, 1,3);
+        gridPaneCreateAcc.add(textFieldJobPosition, 1,2);
+        gridPaneCreateAcc.add(textFieldPass, 1,3);
+        gridPaneCreateAcc.add(textFieldPassAgain, 1,4);
         GridPane.setHalignment(textLogin, HPos.RIGHT);
         GridPane.setHalignment(textUserName, HPos.RIGHT);
         GridPane.setHalignment(textPass, HPos.RIGHT);
@@ -189,9 +193,11 @@ public class Main extends Application {
                 if (coincidence){
                     MainInterface.getAlertWarningDialog("Такой логин уже существует");
                 } else {
-                    DataBaseHelper.addAccountToDB(new Account(
-                            textFieldLogin.getText(),
+                    DataBaseSQLite.addAccountToSQLiteDB(new Account(
+
                             textFieldUserName.getText(),
+                            textFieldJobPosition.getText(),
+                            textFieldLogin.getText(),
                             textFieldPass.getText()
                     ));
                     stageCreateAccount.close();

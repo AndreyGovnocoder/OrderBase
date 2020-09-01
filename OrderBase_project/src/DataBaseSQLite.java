@@ -1,18 +1,20 @@
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
 import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-class DataBaseHelper {
+public class DataBaseSQLite {
+
     public static File file = new File("");
     public static String path = file.getAbsolutePath();
-    private static String DB_URL_home = "jdbc:ucanaccess://" + path + "/src/db/OrderBasePrint_dataBase.accdb";
-    private static String DB_URL = "jdbc:ucanaccess://" + "\\\\192.168.1.32\\backup\\orderBase_DB\\OrderBasePrint_dataBase.accdb";
+    private static String DB_URL_home = "jdbc:sqlite://" + path + "/src/db/OrderBasePrint_dataBase.db";
+    private static String DB_URL = "jdbc:sqlite://" + "\\\\192.168.1.32\\backup\\orderBase_DB\\OrderBasePrint_dataBase.db";
     private static String USER = "123";
     private static String PASSWORD = "1415";
 
@@ -28,6 +30,56 @@ class DataBaseHelper {
         }
 
         return false;
+    }
+
+    static void setClientsToSQLiteDB()
+    {
+        for (Client client:DataBaseHelper.getClientsList())
+        {
+            addClientToDB(client);
+        }
+    }
+
+    static void setAccountsToSQLiteDB()
+    {
+        for(Account account : DataBaseHelper.getAccountsList())
+        {
+            addAccountToSQLiteDB(account);
+        }
+    }
+
+    static void setStaffsToSQLiteDB()
+    {
+        for(Staff staff : DataBaseHelper.getStaffs("менеджер"))
+        {
+            addStaffToDB(staff);
+        }
+
+        for(Staff staff : DataBaseHelper.getStaffs("дизайнер"))
+        {
+            addStaffToDB(staff);
+        }
+    }
+
+    static void setOrdersPositionToSQLiteDB()
+    {
+        for(Order order : DataBaseHelper.getOrdersList())
+        {
+            for (OrdersPosition position : order.getPositions())
+            {
+                String str = Long.toString(order.getId());
+                int orderId = Integer.valueOf(str);
+                addOrdersPositionToDB(position, orderId);
+            }
+        }
+    }
+
+    static void setOrdersToSQLiteDB()
+    {
+        for (Order order : DataBaseHelper.getOrdersList())
+        {
+            addOrderToSQLiteDB(order);
+        }
     }
 
     static ObservableList<Client> getClientsList(){
@@ -69,12 +121,14 @@ class DataBaseHelper {
             } else {
                 conn = DriverManager.getConnection(DB_URL);
             }
-            PreparedStatement pr = conn.prepareStatement("INSERT INTO Clients(client, " +
+            PreparedStatement pr = conn.prepareStatement("INSERT INTO clients(_id, name, " +
                     "phone, mail) " +
-                    "VALUES (?,?,?)");
-            pr.setString(1, client.getClient());
-            pr.setString(2, client.getPhone());
-            pr.setString(3, client.getMail());
+                    "VALUES (?,?,?,?)");
+            pr.setInt(1, client.getId());
+            pr.setString(2, client.getClient());
+            pr.setString(3, client.getPhone());
+            pr.setString(4, client.getMail());
+
             pr.execute();
             conn.close();
         } catch (SQLException e){
@@ -248,9 +302,6 @@ class DataBaseHelper {
     }
 
     static void addStaffToDB(Staff staff){
-        PreparedStatement pr;
-        String sql = "";
-
         Connection conn;
         try {
             if(MainInterface.db.equals("home")){
@@ -258,21 +309,11 @@ class DataBaseHelper {
             } else {
                 conn = DriverManager.getConnection(DB_URL);
             }
-
-            switch (staff.getJobPosition()){
-                case "менеджер":
-                    sql = "INSERT INTO Managers (name_manager) " +
-                            "VALUES (?)";
-                    break;
-
-                case "дизайнер":
-                    sql = "INSERT INTO Designers (name_designer) " +
-                            "VALUES (?)";
-                    break;
-            }
-
-            pr = conn.prepareStatement(sql);
-            pr.setString(1, staff.getName());
+            PreparedStatement pr = conn.prepareStatement("INSERT INTO staffs(_id, name, position) " +
+                    "VALUES (?,?,?)");
+            pr.setInt(1, staff.getId());
+            pr.setString(2, staff.getName());
+            pr.setString(3, staff.getJobPosition());
             pr.execute();
             conn.close();
         } catch (SQLException e){
@@ -281,7 +322,6 @@ class DataBaseHelper {
         } catch (Exception ex){
             System.out.println("Ошибка соединения");
         }
-
     }
 
     static void deleteStaffFromDB(Staff staff){
@@ -319,47 +359,139 @@ class DataBaseHelper {
 
     }
 
-    static void addOrderToDB(Order order){
+    static void addOrderToSQLiteDB(Order order){
         Connection conn;
+        /*
+
         LocalTime localTime = LocalTime.now();
         String allPositions = "";
         for (OrdersPosition p:order.getPositions()){
             allPositions = allPositions + p.getDescription() + ";"+p.getIssue()+";"+p.getQuantity()+";";
         }
-
+         */
+        LocalDateTime localDateTime = LocalDateTime.now();
         try {
             if(MainInterface.db.equals("home")){
                 conn = DriverManager.getConnection(DB_URL_home);
             } else {
                 conn = DriverManager.getConnection(DB_URL);
             }
-            PreparedStatement pr = conn.prepareStatement("INSERT INTO Заказы(Дата, Дата_создания, Заказчик, id_client, Оплата," +
-                    " Сумма, Наименование, Менеджер, Дизайнер, LoginCreate, Готовность, Время_создания, Примечание) " +
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            pr.setObject(1, order.getDate());
-            pr.setObject(2, order.getDateCreate());
-            pr.setString(3, order.getClient().getClient());
-            pr.setInt(4, order.getClient().getId());
+            PreparedStatement pr = conn.prepareStatement("INSERT INTO orders(" +
+                    "_id, date, client, amount, payment, manager, designer, availability, remark, " +
+                    "loginCreate, loginEdit, loginAvailability, dateTimeCreate, dateTimeEdit, dateTimeAvailability) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            pr.setObject(1, order.getId());
+            pr.setObject(2, order.getDate().toLocalDate());
+            if(order.getClient().getId() == 0)
+            {
+                pr.setInt(3, -1);
+            }
+            else
+            {
+                pr.setInt(3, order.getClient().getId());
+            }
+            pr.setString(4, order.getAmount());
             pr.setString(5, order.getPayment());
-            pr.setString(6, order.getAmount());
-            pr.setString(7, allPositions);
-            pr.setString(8, order.getManager());
-            pr.setString(9, order.getDesigner());
-            pr.setString(10, order.getLoginCreate());
-            pr.setString(11, order.getAvailability());
-            pr.setObject(12, localTime);
-            pr.setString(13, order.getRemark());
-            //pr.setString(1,order.getPositions().get(0).getDescription());
+            int managerId = -1;
+            int designerId = -1;
+            int loginCreateId = -1;
+            int loginEditId = -1;
+            int loginAvailabilityId = -1;
+            for(Staff staff : DataBaseHelper.getStaffs("менеджер"))
+            {
+                if(order.getManager().equals(staff.getName())) managerId = staff.getId();
+            }
+            pr.setInt(6, managerId);
+            for(Staff staff : DataBaseHelper.getStaffs("дизайнер"))
+            {
+                if(order.getDesigner().equals(staff.getName())) designerId = staff.getId();
+            }
+            pr.setInt(7, designerId);
+            pr.setString(8, order.getAvailability());
+            pr.setString(9, order.getRemark());
+
+            for(Account account : DataBaseHelper.getAccountsList())
+            {
+                if(order.getLoginCreate() != null)
+                {
+                    if(order.getLoginCreate().equals(account.getUserName())) loginCreateId = account.getId();
+                }
+
+                if(order.getLoginEdit() != null)
+                {
+                    if(order.getLoginEdit().equals(account.getUserName())) loginEditId = account.getId();
+                }
+
+                if(order.getLoginAvailability() != null)
+                {
+                    if(order.getLoginAvailability().equals(account.getUserName())) loginAvailabilityId = account.getId();
+                }
+            }
+
+            pr.setInt(10, loginCreateId);
+            pr.setInt(11, loginEditId);
+            pr.setInt(12, loginAvailabilityId);
+
+            if(order.getDateCreate() != null && order.getTimeCreate() != null) {
+                LocalDateTime localDateTimeCreate = LocalDateTime.of(
+                        order.getDateCreate().toLocalDate().getYear(),
+                        order.getDateCreate().toLocalDate().getMonthValue(),
+                        order.getDateCreate().toLocalDate().getDayOfMonth(),
+                        order.getTimeCreate().getHour(),
+                        order.getTimeCreate().getMinute(),
+                        order.getTimeCreate().getSecond()
+                );
+                pr.setObject(13,localDateTimeCreate );
+            } else
+            {
+                pr.setObject(13,-1 );
+            }
+
+            if(order.getDateEdit() != null && order.getTimeEdit() != null)
+            {
+                LocalDateTime localDateTimeEdit = LocalDateTime.of(
+                        order.getDateEdit().toLocalDate().getYear(),
+                        order.getDateEdit().toLocalDate().getMonthValue(),
+                        order.getDateEdit().toLocalDate().getDayOfMonth(),
+                        order.getTimeEdit().getHour(),
+                        order.getTimeEdit().getMinute(),
+                        order.getTimeEdit().getSecond()
+                );
+
+                pr.setObject(14, localDateTimeEdit);
+            } else
+            {
+                pr.setObject(14, -1);
+            }
+
+            if (order.getDateAvailability() != null && order.getTimeAvailability() != null)
+            {
+                LocalDateTime localDateTimeAvailability = LocalDateTime.of(
+                        order.getDateAvailability().toLocalDate().getYear(),
+                        order.getDateAvailability().toLocalDate().getMonthValue(),
+                        order.getDateAvailability().toLocalDate().getDayOfMonth(),
+                        order.getTimeAvailability().getHour(),
+                        order.getTimeAvailability().getMinute(),
+                        order.getTimeAvailability().getSecond()
+                );
+
+                pr.setObject(15, localDateTimeAvailability);
+            } else
+            {
+                pr.setObject(15, -1);
+            }
+
             pr.execute();
             conn.close();
         } catch (SQLException e){
             System.out.println("Ошибка SQL");
             e.printStackTrace();
         } catch (Exception ex){
-            System.out.println("Ошибка соединения");
+            System.out.println("Ошибка соединения "+ex.toString());
         }
     }
 
+    /*
     static void editOrder(Order order){
         Connection conn;
         String allPositions = "";
@@ -550,6 +682,32 @@ class DataBaseHelper {
 
         return ordersList;
     }
+     */
+
+    static void addOrdersPositionToDB(OrdersPosition position, int idOrder)
+    {
+        Connection conn;
+        try {
+            if(MainInterface.db.equals("home")){
+                conn = DriverManager.getConnection(DB_URL_home);
+            } else {
+                conn = DriverManager.getConnection(DB_URL);
+            }
+            PreparedStatement pr = conn.prepareStatement("INSERT INTO positions(idOrder, description, quantity, issue) " +
+                    "VALUES (?,?,?,?)");
+            pr.setInt(1, idOrder);
+            pr.setString(2, position.getDescription());
+            pr.setString(3, position.getQuantity());
+            pr.setString(4, position.getIssue());
+            pr.execute();
+            conn.close();
+        } catch (SQLException e){
+            System.out.println("Ошибка SQL");
+            e.printStackTrace();
+        } catch (Exception ex){
+            System.out.println("Ошибка соединения");
+        }
+    }
 
     static ArrayList<OrdersPosition> getOrdersPositions(String fromDB){
         ArrayList<OrdersPosition> list = new ArrayList<>();
@@ -660,8 +818,7 @@ class DataBaseHelper {
         MainInterface.refreshOrdersList();
     }
 
-    static ArrayList<Account> getAccountsList(){
-        ArrayList<Account> accountsArrayList = new ArrayList<>();
+    static  void addAccountToSQLiteDB(Account account){
         Connection conn;
         try {
             if(MainInterface.db.equals("home")){
@@ -669,71 +826,13 @@ class DataBaseHelper {
             } else {
                 conn = DriverManager.getConnection(DB_URL);
             }
-            PreparedStatement pr = conn.prepareStatement("SELECT id_, userName, login, password " +
-                    "FROM Accounts");
-            ResultSet rs = pr.executeQuery();
-            while (rs.next()){
-                accountsArrayList.add(new Account(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        "",
-                        rs.getString(3),
-                        rs.getString(4)
-                ));
-            }
-            pr.close();
-            rs.close();
-            conn.close();
-
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-
-        return accountsArrayList;
-    }
-
-    static Account getAccount(String login){
-        Account account = new Account();
-        Connection conn;
-        try {
-            if(MainInterface.db.equals("home")){
-                conn = DriverManager.getConnection(DB_URL_home);
-            } else {
-                conn = DriverManager.getConnection(DB_URL);
-            }
-            PreparedStatement pr = conn.prepareStatement("SELECT id_, password, userName " +
-                    "FROM Accounts WHERE login=?");
-            pr.setString(1, login);
-            ResultSet rs = pr.executeQuery();
-            while (rs.next()){
-               account.setId(rs.getInt(1));
-               account.setLogin(login);
-               account.setPassword(rs.getString(2));
-               account.setUserName(rs.getString(3));
-            }
-            pr.close();
-            rs.close();
-            conn.close();
-
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return account;
-    }
-
-    static  void addAccountToDB(Account account){
-        Connection conn;
-        try {
-            if(MainInterface.db.equals("home")){
-                conn = DriverManager.getConnection(DB_URL_home);
-            } else {
-                conn = DriverManager.getConnection(DB_URL);
-            }
-            PreparedStatement pr = conn.prepareStatement("INSERT INTO Accounts(login, userName, password) " +
-                    "VALUES (?,?,?)");
-            pr.setString(1, account.getLogin());
+            PreparedStatement pr = conn.prepareStatement("INSERT INTO logins(_id, name, position, login, password) " +
+                    "VALUES (?,?,?,?,?)");
+            pr.setInt(1, account.getId());
             pr.setString(2, account.getUserName());
-            pr.setString(3, account.getPassword());
+            pr.setString(3, account.getUserPositon());
+            pr.setString(4, account.getLogin());
+            pr.setString(5, account.getPassword());
             pr.execute();
             conn.close();
         } catch (SQLException e){
@@ -743,49 +842,6 @@ class DataBaseHelper {
             System.out.println("Ошибка соединения");
         }
     }
-
-    /*
-    static void refreshPositions(){
-        for(Order order: getOrdersList()){
-            String allPositions = "";
-            LocalTime localTime = LocalTime.now();
-            for (OrdersPosition p:order.getPositions()){
-                allPositions = allPositions + p.getDescription() + ";"+p.getIssue()+";"+"Не указано"+";";
-            }
-            Connection conn;
-            try {
-                if(MainInterface.db.equals("home")){
-                    conn = DriverManager.getConnection(DB_URL_home);
-                } else {
-                    conn = DriverManager.getConnection(DB_URL);
-                }
-                PreparedStatement pr = conn.prepareStatement("UPDATE Заказы SET " +
-                        "Дата=?,  Дата_редактирования=?, Заказчик=?, id_client=?, Оплата=?, Сумма=?, " +
-                        "Наименование=?, Менеджер=?, Дизайнер=?, LoginEdit=?, Время_редактирования=?, Примечание=? " +
-                        "WHERE id_="+order.getId());
-                pr.setObject(1, order.getDate());
-                pr.setObject(2, order.getDateEdit());
-                pr.setString(3, order.getClient().getClient());
-                pr.setInt(4, order.getClient().getId());
-                pr.setString(5, order.getPayment());
-                pr.setString(6, order.getAmount());
-                pr.setString(7, allPositions);
-                pr.setString(8, order.getManager());
-                pr.setString(9, order.getDesigner());
-                pr.setString(10, order.getLoginEdit());
-                pr.setObject(11, localTime);
-                pr.setString(12, order.getRemark());
-                pr.executeUpdate();
-                conn.close();
-            } catch (SQLException e){
-                System.out.println("Ошибка SQL");
-                e.printStackTrace();
-            } catch (Exception ex){
-                System.out.println("Ошибка соединения");
-            }
-        }
-    }
-     */
 
     static int getCount(){
         int count = 0;

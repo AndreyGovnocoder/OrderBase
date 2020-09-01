@@ -1,4 +1,5 @@
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +15,24 @@ public class Order {
     private String payment;
     private String amount;
     private String manager;
+    private int managerId;
     private String designer;
+    private int designerId;
     private String loginCreate;
+    private int loginCreateId;
     private String loginEdit;
+    private int loginEditId;
     private String loginAvailability;
+    private int loginAvailabilityId;
     private ArrayList<OrdersPosition> positions;
     private String availability;
     private LocalTime timeCreate;
     private LocalTime timeEdit;
     private LocalTime timeAvailability;
     private String remark;
+    private LocalDateTime dateTimeCreate;
+    private LocalDateTime dateTimeEdit;
+    private LocalDateTime dateTimeAvailability;
 
     Order( Date date, Client client, int id_client, String payment,
           String amount, String manager, String designer, String loginCreate, List<OrdersPosition> positions, String availability){
@@ -98,17 +107,32 @@ public class Order {
     public void setManager(String manager) {
         this.manager = manager;
     }
+    public void setManagerId(int managerId) {
+        this.managerId = managerId;
+    }
     public void setDesigner(String designer) {
         this.designer = designer;
+    }
+    public void setDesignerId(int designerId) {
+        this.designerId = designerId;
     }
     public void setLoginCreate(String loginCreate) {
         this.loginCreate = loginCreate;
     }
+    public void setLoginCreateId(int loginCreateId) {
+        this.loginCreateId = loginCreateId;
+    }
     public void setLoginEdit(String loginEdit) {
         this.loginEdit = loginEdit;
     }
+    public void setLoginEditId(int loginEditId) {
+        this.loginEditId = loginEditId;
+    }
     public void setLoginAvailability(String loginAvailability) {
         this.loginAvailability = loginAvailability;
+    }
+    public void setLoginAvailabilityId(int loginAvailabilityId) {
+        this.loginAvailabilityId = loginAvailabilityId;
     }
     public void setPositions(List<OrdersPosition> positions) {
         this.positions = new ArrayList<>(positions);
@@ -141,6 +165,18 @@ public class Order {
         this.remark = remark;
     }
 
+    public void setDateTimeCreate(LocalDateTime dateTimeCreate) {
+        this.dateTimeCreate = dateTimeCreate;
+    }
+
+    public void setDateTimeEdit(LocalDateTime dateTimeEdit) {
+        this.dateTimeEdit = dateTimeEdit;
+    }
+
+    public void setDateTimeAvailability(LocalDateTime dateTimeAvailability) {
+        this.dateTimeAvailability = dateTimeAvailability;
+    }
+
     public long getId() {
         return id;
     }
@@ -159,17 +195,32 @@ public class Order {
     public String getManager() {
         return manager;
     }
+    public int getManagerId() {
+        return managerId;
+    }
     public String getDesigner() {
         return designer;
+    }
+    public int getDesignerId() {
+        return designerId;
     }
     public String getLoginCreate() {
         return loginCreate;
     }
+    public int getLoginCreateId() {
+        return loginCreateId;
+    }
     public String getLoginEdit() {
         return loginEdit;
     }
+    public int getLoginEditId() {
+        return loginEditId;
+    }
     public String getLoginAvailability() {
         return loginAvailability;
+    }
+    public int getLoginAvailabilityId() {
+        return loginAvailabilityId;
     }
     public ArrayList<OrdersPosition> getPositions() {
         return positions;
@@ -200,5 +251,17 @@ public class Order {
     }
     public String getRemark() {
         return remark;
+    }
+
+    public LocalDateTime getDateTimeCreate() {
+        return dateTimeCreate;
+    }
+
+    public LocalDateTime getDateTimeEdit() {
+        return dateTimeEdit;
+    }
+
+    public LocalDateTime getDateTimeAvailability() {
+        return dateTimeAvailability;
     }
 }
