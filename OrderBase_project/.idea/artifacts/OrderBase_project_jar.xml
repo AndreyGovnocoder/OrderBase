@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="OrderBase_project:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/OrderBase_project_jar</output-path>
+    <root id="archive" name="OrderBase_project.jar">
+      <element id="module-output" name="OrderBase_project" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jackcess/UCanAccess-5.0.0-bin/ucanaccess-5.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jackcess/commons-logging-1.2/commons-logging-1.2.jar" path-in-jar="/" />
+      <element id="library" level="project" name="jackcess-3.0.1-sources" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jackcess/hsqldb-2.5.0/hsqldb/lib/hsqldb.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jackcess/jackcess-3.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../jackcess/commons-lang3-3.10/commons-lang3-3.10.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
