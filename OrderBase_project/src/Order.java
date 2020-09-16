@@ -1,267 +1,127 @@
 import java.sql.Date;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Order {
-    private long id;
-    private Date date;
-    private Date dateCreate;
-    private Date dateEdit;
-    private Date dateAvailability;
-    private Client client;
-    private int id_client;
-    private String payment;
-    private String amount;
-    private String manager;
-    private int managerId;
-    private String designer;
-    private int designerId;
-    private String loginCreate;
-    private int loginCreateId;
-    private String loginEdit;
-    private int loginEditId;
-    private String loginAvailability;
-    private int loginAvailabilityId;
-    private ArrayList<OrdersPosition> positions;
-    private String availability;
-    private LocalTime timeCreate;
-    private LocalTime timeEdit;
-    private LocalTime timeAvailability;
-    private String remark;
-    private LocalDateTime dateTimeCreate;
-    private LocalDateTime dateTimeEdit;
-    private LocalDateTime dateTimeAvailability;
+public class Order
+{
+    private int _id;
+    private Date _date;
+    private int _client;
+    private String _payment;
+    private String _amount;
+    private int _manager;
+    private int _designer;
+    private int _accountCreate;
+    private int _accountEdit;
+    private int _accountAvailability;
+    private String _availability;
+    private LocalDateTime _dateTimeCreate;
+    private LocalDateTime _dateTimeEdit;
+    private LocalDateTime _dateTimeAvailability;
+    private String _remark;
 
-    Order( Date date, Client client, int id_client, String payment,
-          String amount, String manager, String designer, String loginCreate, List<OrdersPosition> positions, String availability){
-        this.date = date;
-        this.client = client;
-        this.id_client = id_client;
-        this.payment = payment;
-        this.amount = amount;
-        this.manager = manager;
-        this.designer = designer;
-        this.loginCreate = loginCreate;
-        this.positions = new ArrayList<>(positions);
-        this.availability = availability;
+    public void set_id(int _id)
+    {
+        this._id = _id;
     }
-
-    Order( Date date, Date dateEdit,Client client, String payment,
-           String amount, String manager, String designer, String loginCreate, String loginEdit,
-           List<OrdersPosition> positions, String availability){
-        this.date = date;
-        this.dateEdit = dateEdit;
-        this.client = client;
-        this.id_client = 0;
-        this.payment = payment;
-        this.amount = amount;
-        this.manager = manager;
-        this.designer = designer;
-        this.loginCreate = loginCreate;
-        this.loginEdit = loginEdit;
-        this.positions = new ArrayList<>(positions);
-        this.availability = availability;
+    public void set_date(Date _date)
+    {
+        this._date = _date;
     }
-
-    Order(long id, Date date, Date dateCreate, Date dateEdit, Date dateAvailability,
-          Client client, int id_client, String payment, String amount, String manager, String designer,
-          String loginCreate, String loginEdit, String loginAvailability, List<OrdersPosition> positions,
-          String availability){
-        this.id = id;
-        this.date = date;
-        this.dateCreate = dateCreate;
-        this.dateEdit = dateEdit;
-        this.dateAvailability = dateAvailability;
-        this.client = client;
-        this.id_client = id_client;
-        this.payment = payment;
-        this.amount = amount;
-        this.manager = manager;
-        this.designer = designer;
-        this.loginCreate = loginCreate;
-        this.loginEdit = loginEdit;
-        this.loginAvailability = loginAvailability;
-        this.positions = new ArrayList<>(positions);
-        this.availability = availability;
+    public void set_client(int _client)
+    {
+        this._client = _client;
+    }
+    public void set_payment(String _payment)
+    {
+        this._payment = _payment;
+    }
+    public void set_amount(String _amount)
+    {
+        this._amount = _amount;
+    }
+    public void set_manager(int _manager)
+    {
+        this._manager = _manager;
+    }
+    public void set_designer(int _designer)
+    {
+        this._designer = _designer;
+    }
+    public void set_accountCreate(int _accountCreate)
+    {
+        this._accountCreate = _accountCreate;
+    }
+    public void set_accountEdit(int _accountEdit)
+    {
+        this._accountEdit = _accountEdit;
+    }
+    public void set_accountAvailability(int _accountAvailability)
+    {
+        this._accountAvailability = _accountAvailability;
+    }
+    public void set_availability(String _availability) {
+        this._availability = _availability;
+    }
+    public void set_dateTimeCreate(LocalDateTime _dateTimeCreate)
+    {
+        this._dateTimeCreate = _dateTimeCreate;
+    }
+    public void set_dateTimeEdit(LocalDateTime _dateTimeEdit)
+    {
+        this._dateTimeEdit = _dateTimeEdit;
+    }
+    public void set_dateTimeAvailability(LocalDateTime _dateTimeAvailability)
+    {
+        this._dateTimeAvailability = _dateTimeAvailability;
+    }
+    public void set_remark(String _remark) {
+        this._remark = _remark;
     }
 
-    Order(){}
-
-    public void setId(long id) {
-        this.id = id;
+    public int get_id() {
+        return _id;
     }
-    public void setClient(Client client) {
-        this.client = client;
+    public Date get_date() {
+        return _date;
     }
-    public void setId_client(int id_client) {
-        this.id_client = id_client;
+    public int get_client() {
+        return _client;
     }
-    public void setPayment(String payment) {
-        this.payment = payment;
+    public String get_payment() {
+        return _payment;
     }
-    public void setAmount(String amount) {
-        this.amount = amount;
+    public String get_amount() {
+        return _amount;
     }
-    public void setManager(String manager) {
-        this.manager = manager;
+    public int get_manager() {
+        return _manager;
     }
-    public void setManagerId(int managerId) {
-        this.managerId = managerId;
+    public int get_designer() {
+        return _designer;
     }
-    public void setDesigner(String designer) {
-        this.designer = designer;
+    public int get_accountCreate() {
+        return _accountCreate;
     }
-    public void setDesignerId(int designerId) {
-        this.designerId = designerId;
+    public int get_accountEdit() {
+        return _accountEdit;
     }
-    public void setLoginCreate(String loginCreate) {
-        this.loginCreate = loginCreate;
+    public int get_accountAvailability() {
+        return _accountAvailability;
     }
-    public void setLoginCreateId(int loginCreateId) {
-        this.loginCreateId = loginCreateId;
+    public String get_availability() {
+        return _availability;
     }
-    public void setLoginEdit(String loginEdit) {
-        this.loginEdit = loginEdit;
+    public LocalDateTime get_dateTimeCreate() {
+        return _dateTimeCreate;
     }
-    public void setLoginEditId(int loginEditId) {
-        this.loginEditId = loginEditId;
+    public LocalDateTime get_dateTimeEdit() {
+        return _dateTimeEdit;
     }
-    public void setLoginAvailability(String loginAvailability) {
-        this.loginAvailability = loginAvailability;
+    public LocalDateTime get_dateTimeAvailability() {
+        return _dateTimeAvailability;
     }
-    public void setLoginAvailabilityId(int loginAvailabilityId) {
-        this.loginAvailabilityId = loginAvailabilityId;
-    }
-    public void setPositions(List<OrdersPosition> positions) {
-        this.positions = new ArrayList<>(positions);
-    }
-    public void setAvailability(String availability) {
-        this.availability = availability;
-    }
-    public void setDate(Date date) {
-        this.date = date;
-    }
-    public void setDateCreate(Date dateCreate) {
-        this.dateCreate = dateCreate;
-    }
-    public void setDateEdit(Date dateEdit) {
-        this.dateEdit = dateEdit;
-    }
-    public void setDateAvailability(Date dateAvailability) {
-        this.dateAvailability = dateAvailability;
-    }
-    public void setTimeCreate(LocalTime timeCreate) {
-        this.timeCreate = timeCreate;
-    }
-    public void setTimeEdit(LocalTime timeEdit) {
-        this.timeEdit = timeEdit;
-    }
-    public void setTimeAvailability(LocalTime timeAvailability) {
-        this.timeAvailability = timeAvailability;
-    }
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public String get_remark() {
+        return _remark;
     }
 
-    public void setDateTimeCreate(LocalDateTime dateTimeCreate) {
-        this.dateTimeCreate = dateTimeCreate;
-    }
-
-    public void setDateTimeEdit(LocalDateTime dateTimeEdit) {
-        this.dateTimeEdit = dateTimeEdit;
-    }
-
-    public void setDateTimeAvailability(LocalDateTime dateTimeAvailability) {
-        this.dateTimeAvailability = dateTimeAvailability;
-    }
-
-    public long getId() {
-        return id;
-    }
-    public Client getClient() {
-        return client;
-    }
-    public int getId_client() {
-        return id_client;
-    }
-    public String getPayment() {
-        return payment;
-    }
-    public String getAmount() {
-        return amount;
-    }
-    public String getManager() {
-        return manager;
-    }
-    public int getManagerId() {
-        return managerId;
-    }
-    public String getDesigner() {
-        return designer;
-    }
-    public int getDesignerId() {
-        return designerId;
-    }
-    public String getLoginCreate() {
-        return loginCreate;
-    }
-    public int getLoginCreateId() {
-        return loginCreateId;
-    }
-    public String getLoginEdit() {
-        return loginEdit;
-    }
-    public int getLoginEditId() {
-        return loginEditId;
-    }
-    public String getLoginAvailability() {
-        return loginAvailability;
-    }
-    public int getLoginAvailabilityId() {
-        return loginAvailabilityId;
-    }
-    public ArrayList<OrdersPosition> getPositions() {
-        return positions;
-    }
-    public String getAvailability() {
-        return availability;
-    }
-    public Date getDate() {
-        return date;
-    }
-    public Date getDateCreate() {
-        return dateCreate;
-    }
-    public Date getDateEdit() {
-        return dateEdit;
-    }
-    public Date getDateAvailability() {
-        return dateAvailability;
-    }
-    public LocalTime getTimeCreate() {
-        return timeCreate;
-    }
-    public LocalTime getTimeEdit() {
-        return timeEdit;
-    }
-    public LocalTime getTimeAvailability() {
-        return timeAvailability;
-    }
-    public String getRemark() {
-        return remark;
-    }
-
-    public LocalDateTime getDateTimeCreate() {
-        return dateTimeCreate;
-    }
-
-    public LocalDateTime getDateTimeEdit() {
-        return dateTimeEdit;
-    }
-
-    public LocalDateTime getDateTimeAvailability() {
-        return dateTimeAvailability;
-    }
 }
