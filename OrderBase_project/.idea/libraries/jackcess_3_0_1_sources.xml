@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jackcess-3.0.1-sources">
-    <CLASSES />
-    <JAVADOC />
-    <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../jackcess/jackcess-3.0.1-sources.jar!/" />
-    </SOURCES>
-  </library>
-</component>
