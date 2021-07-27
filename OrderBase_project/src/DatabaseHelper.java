@@ -669,13 +669,14 @@ class DataBaseHelper {
             } else {
                 conn = DriverManager.getConnection(DB_URL);
             }
-            PreparedStatement pr = conn.prepareStatement("SELECT id_, login, userName, password " +
+            PreparedStatement pr = conn.prepareStatement("SELECT id_, userName, login, password " +
                     "FROM Accounts");
             ResultSet rs = pr.executeQuery();
             while (rs.next()){
                 accountsArrayList.add(new Account(
-                        rs.getLong(1),
+                        rs.getInt(1),
                         rs.getString(2),
+                        "",
                         rs.getString(3),
                         rs.getString(4)
                 ));
@@ -705,7 +706,7 @@ class DataBaseHelper {
             pr.setString(1, login);
             ResultSet rs = pr.executeQuery();
             while (rs.next()){
-               account.setId(rs.getLong(1));
+               account.setId(rs.getInt(1));
                account.setLogin(login);
                account.setPassword(rs.getString(2));
                account.setUserName(rs.getString(3));

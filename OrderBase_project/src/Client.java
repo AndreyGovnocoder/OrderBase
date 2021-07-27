@@ -1,69 +1,70 @@
 
-public class Client {
-    private int id;
-    private String client;
-    private String mail;
-    private String phone;
+public class Client
+{
+    private int _id;
+    private String _name;
+    private String _mail;
+    private String _phone;
+    private String _contactPerson;
 
-    Client(int id, String client,    String phone, String mail ){
-        this.id = id;
-        this.client = client;
-        this.mail = mail;
-        this.phone = phone;
+    Client(int id, String name, String phone, String mail, String contactPerson)
+    {
+        this._id = id;
+        this._name = name;
+        this._mail = mail;
+        this._phone = phone;
+        this._contactPerson = contactPerson;
     }
 
-    Client(String client,  String phone, String mail){
-        this.client = client;
-        this.phone = phone;
-        this.mail = mail;
+    Client(String name,  String phone, String mail, String contactPerson)
+    {
+        this._name = name;
+        this._mail = mail;
+        this._phone = phone;
+        this._contactPerson = contactPerson;
     }
 
-    Client(int id, String client ){
-        this.client = client;
-        this.id = id;
+    Client(int id, String name, String phone, String mail)
+    {
+        this._id = id;
+        this._name = name;
+        this._mail = mail;
+        this._phone = phone;
     }
 
-    Client(String client ){
-        this.client = client;
+    Client(String name,  String phone, String mail)
+    {
+        this._name = name;
+        this._mail = mail;
+        this._phone = phone;
     }
 
-
-    Client(){    }
-
-    public int getId() {
-        return id;
+    Client(int id, String name )
+    {
+        this._name = name;
+        this._id = id;
     }
 
-    public String getClient() {
-        return client;
+    Client(String name ){
+        this._name = name;
     }
 
-    public String getMail() {
-        return mail;
-    }
+    Client(){}
 
-    public String getPhone() {
-        return phone;
-    }
+    public void set_id(int _id) {this._id = _id;}
+    public void set_name(String _name) {this._name = _name;}
+    public void set_mail(String _mail) {this._mail = _mail;}
+    public void set_phone(String _phone){this._phone = _phone;}
+    public void set_contactPerson(String _contactPerson) {this._contactPerson = _contactPerson;}
 
-    public void setClient(String client) {
-        this.client = client;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    public int get_id() {return _id;}
+    public String get_name() {return _name;}
+    public String get_mail() {return _mail;}
+    public String get_phone(){return _phone;}
+    public String get_contactPerson() {return _contactPerson;}
 
     @Override
     public String toString() {
-        return this.client;
+        return this._name;
     }
 }

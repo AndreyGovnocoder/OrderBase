@@ -2,6 +2,8 @@ public class OrdersPosition {
     private String description;
     private String quantity = "Не указано";
     private String issue = "Не указано";
+    private int _id;
+    private int _idOrder;
     private boolean toPrint = false;
     private int number;
 
@@ -20,6 +22,22 @@ public class OrdersPosition {
         this.description = description;
     }
     OrdersPosition(){}
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_idOrder(int _idOrder) {
+        this._idOrder = _idOrder;
+    }
+
+    public int get_idOrder() {
+        return _idOrder;
+    }
 
     public void setDescription(String description) {
         this.description = description;
