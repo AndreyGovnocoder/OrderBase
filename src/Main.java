@@ -22,7 +22,7 @@ public class Main extends Application
     public static String path = file.getAbsolutePath();
     private int currAccount = -1;
     static int primaryVersion = 4;
-    static int secondaryVersion = 23;
+    static int secondaryVersion = 24;
     private TextField _loginTextField;
     private PasswordField _passwordField;
     private TextField _passTextField;

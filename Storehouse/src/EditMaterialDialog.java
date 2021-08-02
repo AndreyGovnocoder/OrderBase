@@ -46,7 +46,7 @@ public class EditMaterialDialog
         _editMaterialDialogBorderPane = new BorderPane();
         //_editMaterialDialogScene = new Scene(_editMaterialDialogBorderPane, 310, 350);
         _editMaterialDialogScene = new Scene(_editMaterialDialogBorderPane);
-        Label headKindLabel = new Label("Материал: " + Finder.getKind(_material.get_kind()));
+        Label headKindLabel = new Label("Материал: " + Finder.getMaterialKind(_material.get_kind()));
         HBox headHBox = new HBox();
 
         headKindLabel.setFont(Font.font("Calibri", FontWeight.BOLD, FontPosture.REGULAR, 14));
@@ -87,7 +87,7 @@ public class EditMaterialDialog
         _thiknessTextField = new TextField();
         _priceTextField = new TextField(String.valueOf(0));
         _sellPriceTextField = new TextField(String.valueOf(0));
-        MaterialsKind kind = Finder.getKind(_material.get_kind());
+        MaterialsKind kind = Finder.getMaterialKind(_material.get_kind());
 
         Pattern pattern = Pattern.compile("\\d*|\\d+\\.\\d*");
         TextFormatter formatter = new TextFormatter((UnaryOperator<TextFormatter.Change>) change ->
@@ -184,7 +184,7 @@ public class EditMaterialDialog
         VBox bottomVBox = new VBox();
         Button saveButton = new Button("Сохранить");
         Button cancelButton = new Button("Отмена");
-        MaterialsKind kind = Finder.getKind(_material.get_kind());
+        MaterialsKind kind = Finder.getMaterialKind(_material.get_kind());
 
         saveButton.setPrefWidth(80);
         saveButton.setOnAction(event ->

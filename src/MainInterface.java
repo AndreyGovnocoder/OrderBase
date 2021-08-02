@@ -193,6 +193,10 @@ class MainInterface
         {
             MaterialsForm materialsForm = new MaterialsForm();
             materialsForm.showAndWait(_mainStage);
+            for (MaterialsKind kind : Finder.get_allMaterialsKinds())
+            {
+                System.out.println(kind.get_name());
+            }
         });
         inksMenuItem.setOnAction(event ->
         {

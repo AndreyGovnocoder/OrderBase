@@ -82,7 +82,7 @@ public class Material
     @Override
     public String toString()
     {
-        MaterialsKind kind = Finder.getKind(get_kind());
+        MaterialsKind kind = Finder.getMaterialKind(get_kind());
         final StringBuffer sb = new StringBuffer();
         if (kind != null && kind.get_id() != 0)
         {
@@ -109,7 +109,7 @@ public class Material
     private String getString()
     {
         String string = "Материал. ";
-        MaterialsKind kind = Finder.getKind(get_kind());
+        MaterialsKind kind = Finder.getMaterialKind(get_kind());
 
         if (kind != null && kind.get_id() != 0)
         {

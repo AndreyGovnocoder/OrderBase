@@ -117,7 +117,8 @@ public class MaterialsKindDialog
         okButton.setPrefWidth(80);
         okButton.setOnAction(event ->
         {
-            if(_nameTextField.getText().equals("")) MainInterface.getAlertInformationDialog("Введите название материала");
+            if(_nameTextField.getText().equals(""))
+                MainInterface.getAlertInformationDialog("Введите название материала");
             else
             {
                 String columns = "+~-~Количество~";
@@ -136,13 +137,14 @@ public class MaterialsKindDialog
                 if(_thicknessCheckBox.isSelected()) columns += "Толщина~";
                 _kind.set_attribute(_attributeCheckBox.isSelected());
                 if(_attributeCheckBox.isSelected()) columns += "Атрибут~";
-                columns += "Цена~";
+                columns += "Закуп. цена~Цена продажи~";
 
                 if(!is_edit())
                 {
                    if(checkName())
                    {
                        _kind.set_columns(columns);
+                       _kind.set_active(true);
                        if (DataBaseStorehouse.addMaterialsKind(_kind))
                        {
                            _kind.set_id(DataBaseStorehouse.getLastId(DataBaseStorehouse.KINDS_TABLE));
@@ -150,7 +152,8 @@ public class MaterialsKindDialog
                            _materialsKindDialogStage.close();
                        }
                    }
-                } else
+                }
+                else
                 {
                     _kind.set_columns(columns);
                     if(checkName(_kind.get_id()))
