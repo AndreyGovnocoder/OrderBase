@@ -36,8 +36,14 @@ public class UpdateInfo
     private final static String updateDescription_4_21 = "В разделе \"Светодиоды\" исправлены глюки с добавлением новых видов светодиодов, которые не отображались в выпадающем меню после добавления.";
     private final static String updateDescription_4_22 = "Добавлен раздел \"Заявки\" в меню \"Склад\".\nТакже заявки можно добавлять из соответствующих разделов (например, \"Светодиоды\", \"Конструкции\" и др.) через контекстное меню (правая кнопка мыши по таблице).";
     private final static String updateDescription_4_23 = "Добавлена функция поиска заказа по номеру квитанции.\n\nТакже при появлении новых заявок будет отображаться уведомление и кнопка перехода в раздел \"Заявки\" (Только для Елены Николаевны)";
+    private final static String updateDescription_4_24 = "Исправлены ошибки в методах addValue() и editValue() класса MaterialsForm, из-за которых при инкапсуляции статичных переменных, под которые в стеке уже выделилась память, но при этом поле active классов MaterialsValue и MaterialsKind оставалось false, поэтому при выполнении геттера DatabaseStorehouse в массив activeList переменные не добавлялись.";
+    private final static String updateDescription_4_25 = "Список материалов теперь сортируется в алфавитном порядке";
+    private final static String updateDescription_4_26 = "Теперь при распечатывании квитанции можно выбрать формат бумаги (А4 или А5).\n";
+    private final static String updateDescription_4_27 = "В раздел \"Материалы\" добавлен столбец \"Номер цвета\"";
 
-    private final static List<Integer> _updatesList = Arrays.asList(36, 37, 38, 39, 40, 41, 42, 44, 45, 46, 48, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423);
+    private final static List<Integer> _updatesList = Arrays.asList(
+            36, 37, 38, 39, 40, 41, 42, 44, 45, 46, 48, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423,
+            424, 425, 426, 427);
 
     static String getUpdateDescription(final int vers)
     {
@@ -107,6 +113,18 @@ public class UpdateInfo
             case 423:
                 updateDescription = updateDescription_4_23;
                 break;
+            case 424:
+                updateDescription = updateDescription_4_24;
+                break;
+            case 425:
+                updateDescription = updateDescription_4_25;
+                break;
+            case 426:
+                updateDescription = updateDescription_4_26;
+                break;
+            case 427:
+                updateDescription = updateDescription_4_27;
+                break;
             default:
                 updateDescription = "";
         }
@@ -161,11 +179,11 @@ public class UpdateInfo
                     version = "2";
                 break;
             case 44:
-            if (primary)
-                version = "4";
-            else
-                version = "4";
-            break;
+                if (primary)
+                    version = "4";
+                else
+                    version = "4";
+                break;
             case 45:
                 if (primary)
                     version = "4";
@@ -244,7 +262,30 @@ public class UpdateInfo
                 else
                     version = "23";
                 break;
-
+            case 424:
+                if (primary)
+                    version = "4";
+                else
+                    version = "24";
+                break;
+            case 425:
+                if (primary)
+                    version = "4";
+                else
+                    version = "25";
+                break;
+            case 426:
+                if (primary)
+                    version = "4";
+                else
+                    version = "26";
+                break;
+            case 427:
+                if (primary)
+                    version = "4";
+                else
+                    version = "27";
+                break;
             default:
                 version = "";
         }

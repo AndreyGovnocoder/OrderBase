@@ -91,6 +91,7 @@ class MainInterface
     final static String PAYMENT_50 = "50%";
     final static DollarRate _currDollarRate;
     final static DecimalFormat DF = new DecimalFormat("#.##");
+
     final Finder finder = new Finder();
 
     static
@@ -166,6 +167,10 @@ class MainInterface
                 }
             }
         }
+        LocalDate bornDate = LocalDate.of(2021, 8, 29);
+        LocalDate beforeDate = LocalDate.of(2021, 8, 31);
+        if (_currentAccount == 8 && LocalDate.now().isAfter(bornDate) && LocalDate.now().isBefore(beforeDate))
+            showcongratulations();
     }
 
     private MenuBar getTop()
@@ -1541,11 +1546,9 @@ class MainInterface
                 Node valute = valutes.item(i);
                 if (valute.getChildNodes().item(1).getTextContent().equals("USD"))
                 {
-                    System.out.println("Курс доллара: $" + valute.getChildNodes().item(4).getTextContent());
                     final String rateString = valute.getChildNodes().item(4).getTextContent();
                     try
                     {
-                        //dollarRate.set_dollar(Double.parseDouble(rateString.replace(',', '.')));
                         final double doll = Double.parseDouble(rateString.replace(',', '.'));
                         DollarRate dollarRate = new DollarRate();
                         dollarRate.set_date(LocalDate.parse(date[1], _formatter));
@@ -1860,28 +1863,40 @@ class MainInterface
         stage.initOwner(_mainStage);
         stage.setResizable(false);
 
+        Stage firstImageStage = new Stage();
+        BorderPane firstImageBPane = new BorderPane();
+        Scene firstImageScene = new Scene((firstImageBPane));
+        firstImageStage.setScene(firstImageScene);
+        firstImageStage.setTitle("Поздравляем!");
+        firstImageStage.getIcons().add(getIconLogo());
+        firstImageStage.initModality(Modality.WINDOW_MODAL);
+        firstImageStage.initOwner(_mainStage);
+        firstImageStage.setResizable(false);
+
         StackPane stackPane = new StackPane();
         StackPane topStackPane = new StackPane();
         StackPane centerStackPane = new StackPane();
+        centerStackPane.setStyle("-fx-border-color: black");
+
         StackPane bottomStackPane = new StackPane();
         topStackPane.setAlignment(Pos.TOP_LEFT);
         centerStackPane.setAlignment(Pos.TOP_LEFT);
         bottomStackPane.setAlignment(Pos.TOP_LEFT);
 
-        final Font headFont = Font.font("Segoe Script", FontWeight.BOLD, FontPosture.REGULAR, 18);
-        final Font congrFont = Font.font("Segoe Script", FontWeight.NORMAL, FontPosture.REGULAR, 16);
+        StackPane firstImageStackPane = new StackPane();
+
+        final Font headFont = Font.font("Segoe Script", FontWeight.BOLD, FontPosture.REGULAR, 20);
+        final Font congrFont = Font.font("Segoe Script", FontWeight.NORMAL, FontPosture.REGULAR, 18);
         final Font signagureFont = Font.font("Segoe Script", FontWeight.NORMAL, FontPosture.ITALIC, 14);
 
-        Text headText = new Text();
-        Text congrText = new Text("Поздравляем с наступающим Женским Днём!\n\n" +
-                "8 марта — это день, который напоминает каждому из нас, насколько важны женщины " +
-                "с первого и до последнего мгновения нашей жизни, с их умеренностью, " +
-                "материнской любовью и мудростью. Спасибо вам всем за наполнение этого " +
-                "мира светом и радостью. Всегда оставайтесь такими же настойчивыми и смелыми," +
-                " нежными и искренними. Вы пример для подражания всем сильным мужчинам, " +
-                "чья решимость тает под лучезарным светом ваших глаз. С самой искренней " +
-                "любовью к вам, поздравляем с 8 Марта!");
-        Text signatureText = new Text("мужской коллектив EXPERT Print");
+        Text headText = new Text("С Днем Рождения!");
+        Text congrText = new Text("\tДорогая, очаровательная, восхитительная Любовь! Поздравляем" +
+                " тебя с Днем Рождения! Желаем, чтобы твоя жизнь была полна ярких впечатлений, " +
+                "чтобы вокруг были лишь любимые тобою люди. Мы хотим, чтобы ты была здорова и счастлива, " +
+                "все беды и проблемы обходили тебя стороной. Желаем оставаться такой же жизнерадостной, " +
+                "позитивной и энергичной (\"и не токсичной\" ©)! \n\n\tПусть вещи, которые делают тебя счастливой, " +
+                "попадаются тебе чаще!\n");
+        Text signatureText = new Text("Коллектив EXPERT Print");
         headText.setFont(headFont);
         congrText.setFont(congrFont);
         signatureText.setFont(signagureFont);
@@ -1893,8 +1908,19 @@ class MainInterface
         Image image = null;
         try
         {
-            FileInputStream fs = new FileInputStream(DataBase.path + "\\src\\images\\8.png");
+            FileInputStream fs = new FileInputStream(DataBase.path + "\\src\\images\\dr.png");
             image = new Image(fs);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
+        Image firstImage = null;
+        try
+        {
+            FileInputStream fs = new FileInputStream(DataBase.path + "\\src\\images\\dr2.jpg");
+            firstImage = new Image(fs);
         }
         catch (FileNotFoundException e)
         {
@@ -1906,34 +1932,23 @@ class MainInterface
         backgroundImageView.setFitHeight(768);
         stackPane.setMaxSize(1024, 768);
 
-        congrText.setWrappingWidth(470);
-        centerStackPane.setPadding(new Insets(180,0,0,450));
-        bottomStackPane.setPadding(new Insets(580,0,0,640));
+        ImageView firstImagebackgroundImageView = new ImageView(firstImage);
+        firstImagebackgroundImageView.setFitWidth(700);
+        firstImagebackgroundImageView.setFitHeight(500);
+        firstImageStackPane.setMaxSize(700, 500);
+
+        congrText.setWrappingWidth(640);
+        topStackPane.setPadding(new Insets(230,0,0,400));
+        centerStackPane.setPadding(new Insets(300,0,0,200));
+        bottomStackPane.setPadding(new Insets(710,0,0,360));
 
         stackPane.getChildren().addAll(backgroundImageView, topStackPane, centerStackPane, bottomStackPane);
         borderPane.setCenter(stackPane);
 
-        switch (_currentAccount)
-        {
-            case 8:
-                headText.setText("Дорогая наша Любочка! ");
-                topStackPane.setPadding(new Insets(120,0,0,550));
-                break;
-            case 9:
-                headText.setText("Дорогая наша Елена Николаевна! ");
-                topStackPane.setPadding(new Insets(120,0,0,530));
-                break;
-            case 13:
-                headText.setText("Дорогая наша Таня! ");
-                topStackPane.setPadding(new Insets(120,0,0,550));
-                break;
-            default:
-                String text = "Дорогая наша " + Finder.getAccount(_currentAccount).get_name();
-                headText.setText(text);
-                topStackPane.setPadding(new Insets(120,0,0,550));
-                break;
-        }
+        firstImageStackPane.getChildren().addAll(firstImagebackgroundImageView);
+        firstImageBPane.setCenter(firstImageStackPane);
 
+        firstImageStage.showAndWait();
         stage.showAndWait();
     }
 }

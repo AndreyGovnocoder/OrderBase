@@ -8,6 +8,7 @@ public class MaterialsKind extends MaterialsValue
     private boolean _thickness = false;
     private boolean _attribute = false;
     private boolean _quantity = false;
+    private boolean _colorNumber = false;
     private boolean _active;
     private String _columns;
 
@@ -22,6 +23,10 @@ public class MaterialsKind extends MaterialsValue
     public void set_columns(String columns)
     {
         this._columns = columns;
+    }
+    public void set_colorNumber(boolean _colorNumber)
+    {
+        this._colorNumber = _colorNumber;
     }
     public void set_active(boolean active)
     {
@@ -40,6 +45,7 @@ public class MaterialsKind extends MaterialsValue
     {
         return _columns;
     }
+    public boolean get_colorNumber() { return _colorNumber; }
     public boolean is_active()
     {
         return _active;

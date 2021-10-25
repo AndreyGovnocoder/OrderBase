@@ -2,13 +2,17 @@ import java.util.ArrayList;
 
 public class Finder
 {
+    final static int A4 = 1;
+    final static int A5 = 2;
+    static boolean _isFormatA5 = false;
+    static boolean _isFormatA4 = false;
     private static ArrayList<Machine> _allMachinesArrayList;
     private static ArrayList<Ink> _allInksArrayList;
     private static ArrayList<Construction> _constructionsList;
     private static ArrayList<Led> _ledArrayList;
     private static ArrayList<MaterialsValue> _allLedKindsList;
     private static ArrayList<Material> _allMaterialsList;
-    private static ArrayList<MaterialsKind> _allKinds;
+    private static ArrayList<MaterialsKind> _allMaterialsKinds;
     private static ArrayList<MaterialsValue> _allManufacturers;
     private static ArrayList<MaterialsValue> _allColors;
     private static ArrayList<MaterialsValue> _allProperties;
@@ -51,9 +55,9 @@ public class Finder
     {
         return _allMaterialsList;
     }
-    public static ArrayList<MaterialsKind> get_allKinds()
+    public static ArrayList<MaterialsKind> get_allMaterialsKinds()
     {
-        return _allKinds;
+        return _allMaterialsKinds;
     }
     public static ArrayList<MaterialsValue> get_allManufacturers()
     {
@@ -125,7 +129,7 @@ public class Finder
         _allLedKindsList = DataBaseStorehouse.getMaterialsValuesList(DataBaseStorehouse.LED_KINDS_TABLE);
         _ledArrayList = DataBaseStorehouse.getLedsArrayList();
         _allMaterialsList = DataBaseStorehouse.getMaterialsList();
-        _allKinds = DataBaseStorehouse.getMaterialsKindsList();
+        _allMaterialsKinds = DataBaseStorehouse.getMaterialsKindsList();
         _allManufacturers = DataBaseStorehouse.getMaterialsValuesList(DataBaseStorehouse.MANUFACTURERS_TABLE);
         _allColors = DataBaseStorehouse.getMaterialsValuesList(DataBaseStorehouse.COLORS_TABLE);
         _allProperties = DataBaseStorehouse.getMaterialsValuesList(DataBaseStorehouse.PROPERTIES_TABLE);
@@ -143,6 +147,8 @@ public class Finder
         _allPowersList = DataBaseStorehouse.getMaterialsValuesList(DataBaseStorehouse.POWERS_TABLE);
         _allRequests = DataBaseStorehouse.getRequestList();
         _requestStatuses = DataBaseStorehouse.getRequestStatusList();
+        _isFormatA4 = DataBase.getPaperFormat(A4);
+        _isFormatA5 = DataBase.getPaperFormat(A5);
     }
 
     static Request getRequest(int requestId)
@@ -272,9 +278,9 @@ public class Finder
         return null;
     }
 
-    static MaterialsKind getKind(int kindId)
+    static MaterialsKind getMaterialKind(int kindId)
     {
-        for (final MaterialsKind value : _allKinds)
+        for (final MaterialsKind value : _allMaterialsKinds)
             if (value.get_id() == kindId)
                 return value;
 
@@ -383,5 +389,26 @@ public class Finder
                 orderPositionsList.add(position);
 
         return orderPositionsList;
+    }
+
+    static boolean isFormatA4() {return _isFormatA4;}
+    static boolean isFormatA5() {return _isFormatA5;}
+    static void setFormat(final int format, final boolean value)
+    {
+        if (format == A5)
+        {
+            _isFormatA5 = value;
+            _isFormatA4 = !value;
+            DataBase.setPaperFormat(A5, value);
+            DataBase.setPaperFormat(A4, !value);
+        }
+        else if (format == A4)
+        {
+            _isFormatA5 = !value;
+            _isFormatA4 = value;
+            DataBase.setPaperFormat(A5, !value);
+            DataBase.setPaperFormat(A4, value);
+        }
+
     }
 }

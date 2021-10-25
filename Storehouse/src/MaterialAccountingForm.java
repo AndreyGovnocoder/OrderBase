@@ -212,7 +212,7 @@ public class MaterialAccountingForm
                 } else
                 {
                     Material material = Finder.getMaterial(materialId);
-                    String materialKind = Finder.getKind(
+                    String materialKind = Finder.getMaterialKind(
                             material.get_kind()).get_name();
                     setText(materialKind);
                 }
@@ -337,7 +337,7 @@ public class MaterialAccountingForm
     {
         clearTextFields();
         _materialInfoFlowPane.getChildren().clear();
-        MaterialsKind kind = Finder.getKind(material.get_kind());
+        MaterialsKind kind = Finder.getMaterialKind(material.get_kind());
 
         TitledPane manufacturerTitledPane = new TitledPane();
         manufacturerTitledPane.setText("Производитель");

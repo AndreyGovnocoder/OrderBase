@@ -35,6 +35,7 @@ class MaterialsForm
     private final Label _headPropertyLabel = new Label("Свойство");
     private final Label _headThicknessLabel = new Label("Толщина");
     private final Label _headAttributeLabel = new Label("Атрибут");
+    private final Label _headColorNumberLabel = new Label("Номер цвета");
     private final Label _headQuantityLabel = new Label("Количество");
     private final Label _headPriceLabel = new Label("Закуп. цена");
     private final Label _headSellPriceLabel = new Label("Цена продажи");
@@ -60,6 +61,7 @@ class MaterialsForm
     private TextField _thiknessTextField;
     private TextField _priceTextField;
     private TextField _sellPriceTextField;
+    private TextField _colorNumberTextField;
     public static final String CONSUMPTION = "Расход";
     public static final String INCOMING = "Приход";
 
@@ -70,7 +72,7 @@ class MaterialsForm
             if (material.is_active())
                 _activeMaterialsList.add(material);
         _activeKinds = new ArrayList<>();
-        for (final MaterialsKind kind : Finder.get_allKinds())
+        for (final MaterialsKind kind : Finder.get_allMaterialsKinds())
             if (kind.is_active())
                 _activeKinds.add(kind);
         _activeManufacturers = new ArrayList<>();
@@ -620,6 +622,11 @@ class MaterialsForm
         thicknessCol.setStyle("-fx-alignment: CENTER;");
         thicknessCol.prefWidthProperty().bind(thicknessCol.widthProperty());
 
+        TableColumn<Material, Integer> colorNumberCol = new TableColumn<>("Номер цвета");
+        colorNumberCol.setCellValueFactory(new PropertyValueFactory<>("_colorNumber"));
+        colorNumberCol.setStyle("-fx-alignment: CENTER;");
+        colorNumberCol.prefWidthProperty().bind(colorNumberCol.widthProperty());
+
         TableColumn<Material, Integer> attributeCol = new TableColumn<>("Атрибут");
         attributeCol.setCellValueFactory(new PropertyValueFactory<>("_attribute"));
         attributeCol.setStyle("-fx-alignment: CENTER;");
@@ -724,6 +731,9 @@ class MaterialsForm
                     if(kind.get_manufacturer())
                         tableView.getColumns().add(manufacturerCol);
                     break;
+                case "Номер цвета":
+                    if(kind.get_colorNumber())
+                        tableView.getColumns().add(colorNumberCol);
             }
         }
     }
@@ -752,7 +762,7 @@ class MaterialsForm
             if(kindDialog.is_ok())
             {
                 _activeKinds.add(kindDialog.get_kind());
-                Finder.get_allKinds().add(kindDialog.get_kind());
+                Finder.get_allMaterialsKinds().add(kindDialog.get_kind());
                 _kindComboBox.getItems().add(kindDialog.get_kind());
                 setMaterialsToCenterVBox(kindDialog.get_kind());
             }
@@ -816,10 +826,9 @@ class MaterialsForm
 
     private void addMaterialForm(MaterialsKind materialsKind)
     {
-        System.out.println("add material");
         _addMaterialStage = new Stage();
         BorderPane addMaterialBorderPane = new BorderPane();
-        Scene addMaterialScene = new Scene(addMaterialBorderPane, 330,350);
+        Scene addMaterialScene = new Scene(addMaterialBorderPane, 400,500);
         VBox centerVBox = new VBox();
         VBox bottomVBox = new VBox();
         AnchorPane buttonsAnchorPane = new AnchorPane();
@@ -835,6 +844,7 @@ class MaterialsForm
         _thiknessTextField = new TextField();
         _priceTextField = new TextField(String.valueOf(0));
         _sellPriceTextField = new TextField(String.valueOf(0));
+        _colorNumberTextField = new TextField();
 
         Pattern pattern = Pattern.compile("\\d*|\\d+\\.\\d*");
         TextFormatter formatter = new TextFormatter((UnaryOperator<TextFormatter.Change>) change ->
@@ -848,6 +858,7 @@ class MaterialsForm
         _thiknessTextField.setTextFormatter(formatter);
         _priceTextField.textProperty().addListener(getChangeListener(_priceTextField));
         _sellPriceTextField.textProperty().addListener(getChangeListener(_sellPriceTextField));
+        _colorNumberTextField.textProperty().addListener(getChangeListener(_colorNumberTextField));
 
         initializationComboBox();
 
@@ -865,36 +876,24 @@ class MaterialsForm
                 material.set_kind(_kindComboBox.getSelectionModel().getSelectedItem().get_id());
                 if(_manufacturerComboBox.isVisible() &&
                         _manufacturerComboBox.getSelectionModel().getSelectedItem() != null)
-                {
                     material.set_manufacturer(_manufacturerComboBox.getSelectionModel().getSelectedItem().get_id());
-                }
                 if(_widthTextField.isVisible())
-                {
                     material.set_width(Integer.parseInt(_widthTextField.getText()));
-                }
-                if(_heightTextField.isVisible() && !_heightTextField.getText().equals(""))
-                {
+                if(_heightTextField.isVisible() && !_heightTextField.getText().isEmpty())
                     material.set_height(Integer.parseInt(_heightTextField.getText()));
-                }
                 if(_colorComboBox.isVisible() &&
                         _colorComboBox.getSelectionModel().getSelectedItem() != null)
-                {
                     material.set_color(_colorComboBox.getSelectionModel().getSelectedItem().get_id());
-                }
                 if(_propertyComboBox.isVisible() &&
                         _propertyComboBox.getSelectionModel().getSelectedItem() != null)
-                {
                     material.set_property(_propertyComboBox.getSelectionModel().getSelectedItem().get_id());
-                }
-                if(_thiknessTextField.isVisible() && !_thiknessTextField.getText().equals(""))
-                {
+                if(_thiknessTextField.isVisible() && !_thiknessTextField.getText().isEmpty())
                     material.set_thickness(Float.parseFloat(_thiknessTextField.getText()));
-                }
                 if(_attributeComboBox.isVisible() &&
                         _attributeComboBox.getSelectionModel().getSelectedItem() != null)
-                {
                     material.set_attribute(_attributeComboBox.getSelectionModel().getSelectedItem().get_id());
-                }
+                if (_colorNumberTextField.isVisible() && !_colorNumberTextField.getText().isEmpty())
+                    material.set_colorNumber(Integer.parseInt(_colorNumberTextField.getText()));
                 material.set_quantity(Integer.parseInt(_quantityTextField.getText()));
                 if (_priceTextField.getText().isEmpty())
                     material.set_price(0);
@@ -910,7 +909,6 @@ class MaterialsForm
                 material.set_absence(true);
                 if(DataBaseStorehouse.addMaterial(material))
                 {
-                    System.out.println("add material to DB");
                     material.set_id(
                             DataBaseStorehouse.getLastId(DataBaseStorehouse.MATERIALS_TABLE));
                     _activeMaterialsList.add(material);
@@ -992,6 +990,7 @@ class MaterialsForm
         _propertyComboBox.setVisible(false);
         _thiknessTextField.setVisible(false);
         _attributeComboBox.setVisible(false);
+        _colorNumberTextField.setVisible(false);
 
         _kindComboBox.setValue(kind);
 
@@ -1048,12 +1047,19 @@ class MaterialsForm
             _attributeComboBox.setVisible(true);
         }
 
-        _selectedValueGridPane.add(_headQuantityLabel,0,7);
-        _selectedValueGridPane.add(_quantityTextField,1,7);
-        _selectedValueGridPane.add(_headPriceLabel, 0, 8);
-        _selectedValueGridPane.add(_priceTextField, 1,8);
-        _selectedValueGridPane.add(_headSellPriceLabel, 0, 9);
-        _selectedValueGridPane.add(_sellPriceTextField, 1, 9);
+        if (_kindComboBox.getSelectionModel().getSelectedItem().get_colorNumber())
+        {
+            _selectedValueGridPane.add(_headColorNumberLabel, 0, 7);
+            _selectedValueGridPane.add(_colorNumberTextField, 1, 7);
+            _colorNumberTextField.setVisible(true);
+        }
+
+        _selectedValueGridPane.add(_headQuantityLabel,0,8);
+        _selectedValueGridPane.add(_quantityTextField,1,8);
+        _selectedValueGridPane.add(_headPriceLabel, 0, 9);
+        _selectedValueGridPane.add(_priceTextField, 1,9);
+        _selectedValueGridPane.add(_headSellPriceLabel, 0, 10);
+        _selectedValueGridPane.add(_sellPriceTextField, 1, 10);
 
         _selectedValueGridPane.alignmentProperty().set(Pos.CENTER);
     }
@@ -1062,7 +1068,7 @@ class MaterialsForm
     {
         Stage editMaterialStage = new Stage();
         BorderPane editMaterialBorderPane = new BorderPane();
-        Scene editMaterialScene = new Scene(editMaterialBorderPane, 300,600);
+        Scene editMaterialScene = new Scene(editMaterialBorderPane, 300,500);
         VBox centerVBox = new VBox();
         VBox bottomVBox = new VBox();
         AnchorPane bottomAnchorPane = new AnchorPane();
@@ -1131,7 +1137,7 @@ class MaterialsForm
                 Node removableNode = null;
                 TitledPane pane = null;
                 MaterialsKind kind = kindsListView.getSelectionModel().getSelectedItem();
-                final int indexInArrayAll = Finder.get_allKinds().indexOf(kind);
+                final int indexInArrayAll = Finder.get_allMaterialsKinds().indexOf(kind);
 
                 for (Node node : _centerAccordion.getPanes())
                 {
@@ -1155,7 +1161,7 @@ class MaterialsForm
                                 {
                                     _centerAccordion.getPanes().remove(removableNode);
                                     _activeKinds.remove(kind);
-                                    Finder.get_allKinds().set(indexInArrayAll, kind);
+                                    Finder.get_allMaterialsKinds().set(indexInArrayAll, kind);
                                     kindsListView.getItems().remove(kind);
                                     _kindComboBox.getItems().remove(kind);
                                     _activeMaterialsList.removeIf(material -> material.get_kind() == kind.get_id());
@@ -1167,7 +1173,7 @@ class MaterialsForm
                                     _centerAccordion.getPanes().remove(removableNode);
                                     //DataBaseStorehouse.deleteAllMaterialsByKind(kind.get_id());
                                     _activeKinds.remove(kind);
-                                    Finder.get_allKinds().remove(kind);
+                                    Finder.get_allMaterialsKinds().remove(kind);
                                     kindsListView.getItems().remove(kind);
                                     _kindComboBox.getItems().remove(kind);
                                     _activeMaterialsList.removeIf(material -> material.get_kind() == kind.get_id());
@@ -1182,7 +1188,7 @@ class MaterialsForm
                             if (DataBaseStorehouse.editMaterialsKind(kind))
                             {
                                 _centerAccordion.getPanes().remove(removableNode);
-                                Finder.get_allKinds().set(indexInArrayAll, kind);
+                                Finder.get_allMaterialsKinds().set(indexInArrayAll, kind);
                                 _activeKinds.remove(kind);
                                 kindsListView.getItems().remove(kind);
                                 _kindComboBox.getItems().remove(kind);
@@ -1193,7 +1199,7 @@ class MaterialsForm
                             if (DataBaseStorehouse.deleteMaterialsKind(kind.get_id()))
                             {
                                 _centerAccordion.getPanes().remove(removableNode);
-                                Finder.get_allKinds().remove(kind);
+                                Finder.get_allMaterialsKinds().remove(kind);
                                 _activeKinds.remove(kind);
                                 kindsListView.getItems().remove(kind);
                                 _kindComboBox.getItems().remove(kind);
@@ -1212,13 +1218,13 @@ class MaterialsForm
                 MaterialsKind editableKind = kindsListView.getSelectionModel().getSelectedItem();
                 final int indexInListView = kindsListView.getSelectionModel().getSelectedIndex();
                 final int indexInArrayActive = _activeKinds.indexOf(editableKind);
-                final int indexInArrayAll = Finder.get_allKinds().indexOf(editableKind);
+                final int indexInArrayAll = Finder.get_allMaterialsKinds().indexOf(editableKind);
                 final int indexInComboBox = _kindComboBox.getItems().indexOf(editableKind);
                 MaterialsKindDialog kindDialog = new MaterialsKindDialog(editableKind);
                 kindDialog.showAndWait(editMaterialStage);
                 if (kindDialog.is_ok())
                 {
-                    Finder.get_allKinds().set(indexInArrayAll, kindDialog.get_kind());
+                    Finder.get_allMaterialsKinds().set(indexInArrayAll, kindDialog.get_kind());
                     _activeKinds.set(indexInArrayActive, kindDialog.get_kind());
                     kindsListView.getItems().set(indexInListView, kindDialog.get_kind());
                     _kindComboBox.getItems().set(indexInComboBox, kindDialog.get_kind());
@@ -1264,10 +1270,10 @@ class MaterialsForm
         addKindMenuItem.setOnAction(event ->
         {
             MaterialsKindDialog kindDialog = new MaterialsKindDialog();
-            kindDialog.showAndWait(_addMaterialStage);
+            kindDialog.showAndWait(editMaterialStage);
             if(kindDialog.is_ok())
             {
-                Finder.get_allKinds().add(kindDialog.get_kind());
+                Finder.get_allMaterialsKinds().add(kindDialog.get_kind());
                 _activeKinds.add(kindDialog.get_kind());
                 _kindComboBox.getItems().add(kindDialog.get_kind());
                 kindsListView.getItems().add(kindDialog.get_kind());
@@ -1644,18 +1650,18 @@ class MaterialsForm
     {
         boolean check = false;
         if(_kindComboBox.getValue() == null)
-        {
             MainInterface.getAlertWarningDialog("Не выбран материал");
-        } else if (_widthTextField.isVisible() && _widthTextField.getText().equals(""))
-        {
+        else if (_widthTextField.isVisible() && _widthTextField.getText().isEmpty())
             MainInterface.getAlertWarningDialog("Не указана ширина материала");
-        } else if(_quantityTextField.getText().equals(""))
+        else if (_colorNumberTextField.isVisible() && _colorNumberTextField.getText().isEmpty())
+            MainInterface.getAlertWarningDialog("Не указан номер цвета");
+        else if(_quantityTextField.getText().equals(""))
         {
-            MainInterface.getAlertWarningDialog("Не указано количество");
-        } else
-        {
+            _quantityTextField.setText("0");
             check = true;
         }
+        else
+            check = true;
 
         return check;
     }
@@ -1712,6 +1718,7 @@ class MaterialsForm
                         if (DataBaseStorehouse.addMaterialsValue(value.get_name(), TABLE))
                         {
                             value.set_id(DataBaseStorehouse.getLastId(TABLE));
+                            value.set_active(true);
                             _activeManufacturers.add(value);
                             Finder.get_allManufacturers().add(value);
                         }
@@ -1743,6 +1750,7 @@ class MaterialsForm
                         if (DataBaseStorehouse.addMaterialsValue(value.get_name(), TABLE))
                         {
                             value.set_id(DataBaseStorehouse.getLastId(TABLE));
+                            value.set_active(true);
                             _activeColors.add(value);
                             Finder.get_allColors().add(value);
                         }
@@ -1774,6 +1782,7 @@ class MaterialsForm
                         if (DataBaseStorehouse.addMaterialsValue(value.get_name(), TABLE))
                         {
                             value.set_id(DataBaseStorehouse.getLastId(TABLE));
+                            value.set_active(true);
                             _activeProperties.add(value);
                             Finder.get_allProperties().add(value);
                         }
@@ -1804,6 +1813,7 @@ class MaterialsForm
                         if (DataBaseStorehouse.addMaterialsValue(value.get_name(), TABLE))
                         {
                             value.set_id(DataBaseStorehouse.getLastId(TABLE));
+                            value.set_active(true);
                             _actitveAttributes.add(value);
                             Finder.get_allAttributes().add(value);
                         }
@@ -1845,7 +1855,7 @@ class MaterialsForm
             for (final TableColumn tableColumn : tableView.getColumns())
                 columns += tableColumn.getText() + "~";
 
-            MaterialsKind kind = Finder.getKind(Integer.parseInt(tableView.getUserData().toString()));
+            MaterialsKind kind = Finder.getMaterialKind(Integer.parseInt(tableView.getUserData().toString()));
             DataBaseStorehouse.addColumnsToKind(kind, columns);
         }
     }

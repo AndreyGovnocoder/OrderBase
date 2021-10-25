@@ -27,6 +27,7 @@ public class DataBase
     static final String VERSION_TABLE = "versions";
     static final String RECEIPTS_TABLE = "receipts";
     static final String DOLLAR_RATE_TABLE = "dollarRate";
+    static final String PAPERFORMAT_TABLE = "paperFormat";
 
     static boolean testConnection()
     {
@@ -1156,5 +1157,59 @@ public class DataBase
         }
 
         return binaryStream;
+    }
+
+    static boolean setPaperFormat(final int format, boolean value)
+    {
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("UPDATE " +
+                    PAPERFORMAT_TABLE + " SET " +
+                    "value = ?" +
+                    "WHERE _id =" + format);
+            pr.setBoolean(1, value);
+            pr.executeUpdate();
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+        return true;
+    }
+
+    static boolean getPaperFormat(final int format)
+    {
+        System.out.println("in getPaperFormat");
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        boolean value = false;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("SELECT value " +
+                    " FROM " + PAPERFORMAT_TABLE +
+                    " WHERE _id = " + format);
+            rs = pr.executeQuery();
+            while (rs.next())
+                value = rs.getBoolean(1);
+
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+
+        return value;
     }
 }
