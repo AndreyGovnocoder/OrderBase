@@ -12,6 +12,7 @@ public class Material
     private int _quantity;
     private int _price;
     private int _sellPrice;
+    private int _colorNumber;
     private boolean _active;
     private boolean _absence;
 
@@ -33,7 +34,10 @@ public class Material
     {
         this._sellPrice = _sellPrice;
     }
-
+    public void set_colorNumber(int _colorNumber)
+    {
+        this._colorNumber = _colorNumber;
+    }
     public void set_active(boolean active)
     {
         this._active = active;
@@ -61,7 +65,10 @@ public class Material
     {
         return _sellPrice;
     }
-
+    public int get_colorNumber()
+    {
+        return _colorNumber;
+    }
     public boolean is_active()
     {
         return _active;

@@ -35,6 +35,8 @@ class Print
     static private String _manager = "";
     static private String _client = "";
     static private String _date = "";
+    static private RadioButton formatA4RBtn = new RadioButton("A4");
+    static private RadioButton formatA5RBtn = new RadioButton("A5");
 
     static boolean toPrint(Order order, Stage primaryStage)
     {
@@ -50,6 +52,8 @@ class Print
         TitledPane orderTitledPane = new TitledPane();
         GridPane orderGridPane = new GridPane();
         TitledPane toPrintTitledPane = new TitledPane();
+        TitledPane paperFormatTitiledPane  = new TitledPane();
+        HBox paperFormatHBox = new HBox();
         Label headDateLabel = new Label("Дата: ");
         Label headClientLabel = new Label("Заказчик: ");
         Label headManagerLabel = new Label("Менеджер: ");
@@ -210,14 +214,35 @@ class Print
         toPrintTitledPane.setExpanded(true);
         toPrintTitledPane.setCollapsible(false);
 
+
+        ToggleGroup formatRBtnsGroup = new ToggleGroup();
+        formatA4RBtn.setToggleGroup(formatRBtnsGroup);
+        formatA5RBtn.setToggleGroup(formatRBtnsGroup);
+        formatA5RBtn.setSelected(!Finder.isFormatA4());
+        formatA4RBtn.setSelected(Finder.isFormatA4());
+
+        formatA4RBtn.setOnAction(event -> Finder.setFormat(Finder.A4, formatA4RBtn.isSelected()));
+        formatA5RBtn.setOnAction(event -> Finder.setFormat(Finder.A5, formatA5RBtn.isSelected()));
+
+        paperFormatHBox.setSpacing(20);
+        paperFormatHBox.getChildren().addAll(formatA4RBtn, formatA5RBtn);
+
+        //paperFormatTitiledPane.setPadding(new Insets(10));
+        paperFormatTitiledPane.setText("Используемый формат бумаги");
+        paperFormatTitiledPane.setContent(paperFormatHBox);
+        paperFormatTitiledPane.setExpanded(true);
+        paperFormatTitiledPane.setCollapsible(false);
+
         centerVBox.setSpacing(10);
         centerVBox.setPadding(new Insets(15));
         centerVBox.setStyle("-fx-background-color: #f0f8ff");
-        centerVBox.getChildren().addAll(orderTitledPane, _orderPositionsTableView, new Separator(), toPrintTitledPane);
+        centerVBox.getChildren().addAll(
+                orderTitledPane,
+                _orderPositionsTableView,
+                new Separator(),
+                paperFormatTitiledPane,
+                toPrintTitledPane);
 
-        //buttonsHBox.setSpacing(10);
-        //buttonsHBox.setPadding(new Insets(15));
-        //buttonsHBox.getChildren().addAll(toPrintButton, cancelButton);
         buttonAnchorPane.getChildren().addAll(toPrintButton, cancelButton);
         AnchorPane.setTopAnchor(cancelButton, 5.0);
         AnchorPane.setRightAnchor(cancelButton, 5.0);
@@ -282,12 +307,30 @@ class Print
         JobSettings jobSettings = printerJob.getJobSettings();
         PageLayout pageLayout = jobSettings.getPageLayout();
 
-        pageLayout = printer.createPageLayout(Paper.A5, PageOrientation.LANDSCAPE, Printer.MarginType.EQUAL);
+        if (Finder._isFormatA4)
+        {
+            pageLayout = printer.createPageLayout(
+                    Paper.A4,
+                    PageOrientation.PORTRAIT,
+                    Printer.MarginType.EQUAL);
+            printBorderPane.setPrefWidth(pageLayout.getPrintableWidth()-5);
+            printBorderPane.setPrefHeight(pageLayout.getPrintableHeight()-5);
+            printBorderPane.setMinHeight(pageLayout.getPrintableHeight()/2 - 5);
+            printBorderPane.setMaxHeight(pageLayout.getPrintableHeight()/2 - 5);
+        }
+        else
+        {
+            pageLayout = printer.createPageLayout(
+                    Paper.A5,
+                    PageOrientation.LANDSCAPE,
+                    Printer.MarginType.EQUAL);
 
-        printBorderPane.setPrefWidth(pageLayout.getPrintableWidth()-20);
-        printBorderPane.setPrefHeight(pageLayout.getPrintableHeight()-20);
-        printBorderPane.setMinHeight(pageLayout.getPrintableHeight()-20);
-        printBorderPane.setMaxHeight(pageLayout.getPrintableHeight()-20);
+            printBorderPane.setPrefWidth(pageLayout.getPrintableWidth()-10);
+            printBorderPane.setPrefHeight(pageLayout.getPrintableHeight()-10);
+            printBorderPane.setMinHeight(pageLayout.getPrintableHeight() - 10);
+            printBorderPane.setMaxHeight(pageLayout.getPrintableHeight() - 10);
+        }
+        //printBorderPane.setStyle("-fx-border-color: black");
 
         ColumnConstraints numberCol = new ColumnConstraints();
         numberCol.setPercentWidth(4);

@@ -561,8 +561,8 @@ public class DataBaseStorehouse
             pr = connection.prepareStatement("INSERT INTO " +
                     KINDS_TABLE +
                     "(name, manufacturer, width, height, color, " +
-                    "property, thickness, attribute, columns, active) " +
-                    "VALUES (?,?,?,?,?,?,?,?,?,?)");
+                    "property, thickness, attribute, colorNumber, columns, active) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?)");
             pr.setString(1, kind.get_name());
             pr.setBoolean(2, kind.get_manufacturer());
             pr.setBoolean(3, kind.get_width());
@@ -571,8 +571,9 @@ public class DataBaseStorehouse
             pr.setBoolean(6, kind.get_property());
             pr.setBoolean(7, kind.get_thickness());
             pr.setBoolean(8, kind.get_attribute());
-            pr.setString(9, kind.get_columns());
-            pr.setBoolean(10, true);
+            pr.setBoolean(9, kind.get_colorNumber());
+            pr.setString(10, kind.get_columns());
+            pr.setBoolean(11, true);
             pr.execute();
         }
         catch (SQLException e)
@@ -597,7 +598,8 @@ public class DataBaseStorehouse
             pr = connection.prepareStatement("UPDATE " +
                     KINDS_TABLE +
                     " SET name=?, manufacturer=?, width=?, height=?," +
-                    " color=?, property=?, thickness=?, attribute=?, columns=?, active=?" +
+                    " color=?, property=?, thickness=?, attribute=?, " +
+                    "colorNumber=?, columns=?, active=?" +
                     " WHERE _id = "+ kind.get_id());
             pr.setString(1, kind.get_name());
             pr.setBoolean(2, kind.get_manufacturer());
@@ -607,8 +609,9 @@ public class DataBaseStorehouse
             pr.setBoolean(6, kind.get_property());
             pr.setBoolean(7, kind.get_thickness());
             pr.setBoolean(8, kind.get_attribute());
-            pr.setString(9, kind.get_columns());
-            pr.setBoolean(10, kind.is_active());
+            pr.setBoolean(9, kind.get_colorNumber());
+            pr.setString(10, kind.get_columns());
+            pr.setBoolean(11, kind.is_active());
             pr.executeUpdate();
         } catch (SQLException e)
         {
@@ -670,14 +673,6 @@ public class DataBaseStorehouse
             closePrRsAndConnection(pr2, rs, connection2);
         }
 
-        /*
-        for(Material material : MaterialsForm._materialsList)
-        {
-            if(material.get_kind() == kindId)
-                deleteAccountingByMaterial(material.get_id());
-        }
-         */
-
         return true;
     }
 
@@ -693,8 +688,8 @@ public class DataBaseStorehouse
             connection = DriverManager.getConnection(DB_URL);
             pr = connection.prepareStatement("SELECT " +
                     "_id, name, manufacturer, width, height, color, " +
-                    "property, thickness, attribute, active " +
-                    " FROM " +  KINDS_TABLE);
+                    "property, thickness, attribute, colorNumber, active " +
+                    " FROM " +  KINDS_TABLE + " ORDER BY name ASC");
             rs = pr.executeQuery();
             while (rs.next())
             {
@@ -708,7 +703,8 @@ public class DataBaseStorehouse
                 kind.set_property(rs.getBoolean(7));
                 kind.set_thickness(rs.getBoolean(8));
                 kind.set_attribute(rs.getBoolean(9));
-                kind.set_active(rs.getBoolean(10));
+                kind.set_colorNumber(rs.getBoolean(10));
+                kind.set_active(rs.getBoolean(11));
                 kindsList.add(kind);
             }
         }
@@ -728,15 +724,14 @@ public class DataBaseStorehouse
         PreparedStatement pr = null;
         ResultSet rs = null;
         Connection connection = null;
-        System.out.println("in Database: add material");
         try
         {
             connection = DriverManager.getConnection(DB_URL);
             pr = connection.prepareStatement("INSERT INTO " +
                     MATERIALS_TABLE +
                     "(kind, manufacturer, width, height, color, " +
-                    "property, thickness, attribute, quantity, price, sellPrice, active, absence) " +
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    "property, thickness, attribute, quantity, price, sellPrice, colorNumber, active, absence) " +
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             pr.setInt(1, material.get_kind());
             pr.setInt(2, material.get_manufacturer());
             pr.setInt(3, material.get_width());
@@ -748,8 +743,9 @@ public class DataBaseStorehouse
             pr.setInt(9, material.get_quantity());
             pr.setInt(10, material.get_price());
             pr.setInt(11, material.get_sellPrice());
-            pr.setBoolean(12, true);
+            pr.setInt(12, material.get_colorNumber());
             pr.setBoolean(13, true);
+            pr.setBoolean(14, true);
             pr.execute();
         }
         catch (SQLException e)
@@ -778,7 +774,8 @@ public class DataBaseStorehouse
             pr = connection.prepareStatement("UPDATE " +
                     MATERIALS_TABLE +
                     " SET kind=?, manufacturer=?, width=?, height=?, color=?, " +
-                    "property=?, thickness=?, attribute=?, quantity=?, price=?, sellPrice=?, active=?, absence=?" +
+                    "property=?, thickness=?, attribute=?, quantity=?, price=?, " +
+                    "sellPrice=?, colorNumber=?, active=?, absence=?" +
                     " WHERE _id = "+ material.get_id());
             pr.setInt(1, material.get_kind());
             pr.setInt(2, material.get_manufacturer());
@@ -791,8 +788,9 @@ public class DataBaseStorehouse
             pr.setInt(9, material.get_quantity());
             pr.setInt(10, material.get_price());
             pr.setInt(11, material.get_sellPrice());
-            pr.setBoolean(12, material.is_active());
-            pr.setBoolean(13, material.is_absence());
+            pr.setInt(12, material.get_colorNumber());
+            pr.setBoolean(13, material.is_active());
+            pr.setBoolean(14, material.is_absence());
             pr.executeUpdate();
         } catch (SQLException e)
         {
@@ -850,7 +848,8 @@ public class DataBaseStorehouse
             connection = DriverManager.getConnection(DB_URL);
             pr = connection.prepareStatement("SELECT " +
                     "_id, kind, manufacturer, width, height, color, " +
-                    "property, thickness, attribute, quantity, price, sellPrice, active, absence" +
+                    "property, thickness, attribute, quantity, price, " +
+                    "sellPrice, colorNumber, active, absence" +
                     " FROM " +  MATERIALS_TABLE);
             rs = pr.executeQuery();
             while (rs.next())
@@ -868,8 +867,9 @@ public class DataBaseStorehouse
                 material.set_quantity(rs.getInt(10));
                 material.set_price(rs.getInt(11));
                 material.set_sellPrice(rs.getInt(12));
-                material.set_active(rs.getBoolean(13));
-                material.set_absence(rs.getBoolean(14));
+                material.set_colorNumber(rs.getInt(13));
+                material.set_active(rs.getBoolean(14));
+                material.set_absence(rs.getBoolean(15));
                 materialsList.add(material);
             }
         }
@@ -883,36 +883,6 @@ public class DataBaseStorehouse
 
         return materialsList;
     }
-    /*
-        static boolean deleteAccountingByMaterial(int materialId)
-        {
-
-            PreparedStatement pr = null;
-            ResultSet rs = null;
-            Connection connection = null;
-            try
-            {
-                connection = DriverManager.getConnection(DB_URL);
-                pr = connection.prepareStatement("DELETE FROM " +
-                        MATERIAL_ACCOUNTINGS_TABLE +
-                        " WHERE material = " + materialId);
-                pr.executeUpdate();
-            } catch (SQLException e){
-                System.out.println("Ошибка SQL");
-                e.printStackTrace();
-                return false;
-            } catch (Exception ex){
-                System.out.println("Ошибка соединения");
-                return false;
-            } finally
-            {
-                closePrRsAndConnection(pr, rs, connection);
-            }
-
-            return true;
-
-        }
-    */
 
     static boolean addColumnsToKind(MaterialsKind kind, String columns)
     {
@@ -1533,101 +1503,6 @@ public class DataBaseStorehouse
 
         return accountingArrayList;
     }
-
-    /*
-    static ArrayList<PowerModuleValue> getPowerModuleValuesList(final String TABLE)
-    {
-        ArrayList<PowerModuleValue> valueArrayList = new ArrayList<>();
-
-        PreparedStatement pr = null;
-        ResultSet rs = null;
-        Connection connection = null;
-        try
-        {
-            connection = DriverManager.getConnection(DB_URL);
-            pr = connection.prepareStatement("SELECT " +
-                    "_id, name, active" +
-                    " FROM " +  TABLE);
-            rs = pr.executeQuery();
-            while (rs.next())
-            {
-                PowerModuleValue value = new PowerModuleValue();
-                value.set_id(rs.getInt(1));
-                value.set_name(rs.getString(2));
-                value.set_active(rs.getBoolean(3));
-
-                valueArrayList.add(value);
-            }
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        } finally
-        {
-            closePrRsAndConnection(pr, rs, connection);
-        }
-
-        return valueArrayList;
-    }
-
-    static boolean addPowerModulesValue (PowerModuleValue value, final String TABLE)
-    {
-        PreparedStatement pr = null;
-        ResultSet rs = null;
-        Connection connection = null;
-        try
-        {
-            connection = DriverManager.getConnection(DB_URL);
-            pr = connection.prepareStatement("INSERT INTO " +
-                    TABLE +
-                    "(name, active) " +
-                    "VALUES (?,?)");
-            pr.setString(1, value.get_name());
-            pr.setBoolean(2, true);
-            pr.execute();
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-            return false;
-        } finally
-        {
-            closePrRsAndConnection(pr, rs, connection);
-        }
-
-        return true;
-    }
-
-    static boolean editPowerModulesValue(PowerModuleValue value, final String TABLE)
-    {
-        PreparedStatement pr = null;
-        ResultSet rs = null;
-        Connection connection = null;
-        try
-        {
-            connection = DriverManager.getConnection(DB_URL);
-            pr = connection.prepareStatement("UPDATE " +
-                    TABLE +
-                    " SET name=?, active=?" +
-                    " WHERE _id = "+ value.get_id());
-            pr.setString(1, value.get_name());
-            pr.setBoolean(2, value.is_active());
-            pr.executeUpdate();
-        } catch (SQLException e)
-        {
-            System.out.println("Ошибка SQL");
-            e.printStackTrace();
-            return false;
-        } catch (Exception ex){
-            System.out.println("Ошибка соединения");
-            return false;
-        } finally
-        {
-            closePrRsAndConnection(pr, rs, connection);
-        }
-        return true;
-    }
-     */
 
     static boolean deletePowerModulesValue(int valueId, final String TABLE)
     {
@@ -2375,7 +2250,6 @@ public class DataBaseStorehouse
                 RequestsKind kind = new RequestsKind();
                 kind.set_id(rs.getInt(1));
                 kind.set_kind(rs.getString(2));
-                System.out.println("kind = " + kind.get_kind());
                 requestsKindsList.add(kind);
             }
         }

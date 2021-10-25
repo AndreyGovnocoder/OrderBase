@@ -23,6 +23,7 @@ public class MaterialsKindDialog
     CheckBox _propertyCheckBox;
     CheckBox _thicknessCheckBox;
     CheckBox _attributeCheckBox;
+    CheckBox _colorNumberCheckBox;
     MaterialsKind _kind;
     boolean _edit = false;
     boolean _ok = false;
@@ -49,6 +50,7 @@ public class MaterialsKindDialog
         _propertyCheckBox = new CheckBox("Свойства");
         _thicknessCheckBox = new CheckBox("Толщина");
         _attributeCheckBox = new CheckBox("Атрибут");
+        _colorNumberCheckBox = new CheckBox("Номер цвета");
 
         _materialsKindDialogBorderPane.setCenter(getCenter());
         _materialsKindDialogBorderPane.setBottom(getBottom());
@@ -60,12 +62,9 @@ public class MaterialsKindDialog
         _materialsKindDialogStage.initModality(Modality.WINDOW_MODAL);
         _materialsKindDialogStage.initOwner(primaryStage);
         if(_edit)
-        {
             _materialsKindDialogStage.setTitle("Редактирование: вид материала");
-        } else
-        {
+        else
             _materialsKindDialogStage.setTitle("Новый вид материала");
-        }
         _materialsKindDialogStage.setScene(_materialsKindDialogScene);
         _materialsKindDialogStage.getIcons().add(MainInterface.getIconLogo());
         _materialsKindDialogStage.showAndWait();
@@ -92,14 +91,14 @@ public class MaterialsKindDialog
                 _colorCheckBox,
                 _propertyCheckBox,
                 _thicknessCheckBox,
-                _attributeCheckBox);
+                _attributeCheckBox,
+                _colorNumberCheckBox);
 
         _centerVBox.setSpacing(10);
         _centerVBox.setAlignment(Pos.TOP_CENTER);
         _centerVBox.setStyle("-fx-background-color: #f0f8ff");
         _centerVBox.setPadding(new Insets(10));
         _centerVBox.getChildren().addAll(headNameHBox,itemsVBox);
-
         return _centerVBox;
     }
 
@@ -109,7 +108,6 @@ public class MaterialsKindDialog
         VBox bottomVBox = new VBox();
         Button okButton = new Button("Ок");
         Button cancelButton = new Button("Отмена");
-
 
         cancelButton.setPrefWidth(80);
         cancelButton.setOnAction(event -> _materialsKindDialogStage.close());
@@ -124,19 +122,21 @@ public class MaterialsKindDialog
                 String columns = "+~-~Количество~";
                 _kind.set_name(_nameTextField.getText());
                 _kind.set_manufacturer(_manufacturerCheckBox.isSelected());
-                if(_manufacturerCheckBox.isSelected()) columns += "Производитель~";
                 _kind.set_width(_widthCheckBox.isSelected());
-                if(_widthCheckBox.isSelected()) columns += "Ширина~";
                 _kind.set_height(_heightCheckBox.isSelected());
-                if(_heightCheckBox.isSelected()) columns += "Высота/Метраж~";
                 _kind.set_color(_colorCheckBox.isSelected());
-                if(_colorCheckBox.isSelected()) columns += "Цвет~";
                 _kind.set_property(_propertyCheckBox.isSelected());
-                if(_propertyCheckBox.isSelected()) columns += "Свойство~";
                 _kind.set_thickness(_thicknessCheckBox.isSelected());
-                if(_thicknessCheckBox.isSelected()) columns += "Толщина~";
                 _kind.set_attribute(_attributeCheckBox.isSelected());
+                _kind.set_colorNumber(_colorNumberCheckBox.isSelected());
+                if(_manufacturerCheckBox.isSelected()) columns += "Производитель~";
+                if(_widthCheckBox.isSelected()) columns += "Ширина~";
+                if(_heightCheckBox.isSelected()) columns += "Высота/Метраж~";
+                if(_colorCheckBox.isSelected()) columns += "Цвет~";
+                if(_propertyCheckBox.isSelected()) columns += "Свойство~";
+                if(_thicknessCheckBox.isSelected()) columns += "Толщина~";
                 if(_attributeCheckBox.isSelected()) columns += "Атрибут~";
+                if (_colorNumberCheckBox.isSelected()) columns += "Номер цвета~";
                 columns += "Закуп. цена~Цена продажи~";
 
                 if(!is_edit())
@@ -181,13 +181,14 @@ public class MaterialsKindDialog
     void setContent()
     {
         _nameTextField.setText(_kind.get_name());
-        if(_kind.get_manufacturer()) _manufacturerCheckBox.setSelected(true);
-        if(_kind.get_width()) _widthCheckBox.setSelected(true);
-        if(_kind.get_height()) _heightCheckBox.setSelected(true);
-        if(_kind.get_color()) _colorCheckBox.setSelected(true);
-        if(_kind.get_property()) _propertyCheckBox.setSelected(true);
-        if(_kind.get_thickness()) _thicknessCheckBox.setSelected(true);
-        if(_kind.get_attribute()) _attributeCheckBox.setSelected(true);
+        if (_kind.get_manufacturer()) _manufacturerCheckBox.setSelected(true);
+        if (_kind.get_width()) _widthCheckBox.setSelected(true);
+        if (_kind.get_height()) _heightCheckBox.setSelected(true);
+        if (_kind.get_color()) _colorCheckBox.setSelected(true);
+        if (_kind.get_property()) _propertyCheckBox.setSelected(true);
+        if (_kind.get_thickness()) _thicknessCheckBox.setSelected(true);
+        if (_kind.get_attribute()) _attributeCheckBox.setSelected(true);
+        if (_kind.get_colorNumber()) _colorNumberCheckBox.setSelected(true);
     }
 
     MaterialsKind get_kind(){ return _kind; }
@@ -198,7 +199,6 @@ public class MaterialsKindDialog
     {
         for(MaterialsKind kind : DataBaseStorehouse.getMaterialsKindsList())
         {
-            System.out.println(kind.get_name()+ " = " +_kind.get_name());
             if(kind.get_name().equals(_kind.get_name()))
             {
                 MainInterface.getAlertWarningDialog("Такое название уже существует");

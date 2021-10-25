@@ -35,6 +35,7 @@ class MaterialsForm
     private final Label _headPropertyLabel = new Label("Свойство");
     private final Label _headThicknessLabel = new Label("Толщина");
     private final Label _headAttributeLabel = new Label("Атрибут");
+    private final Label _headColorNumberLabel = new Label("Номер цвета");
     private final Label _headQuantityLabel = new Label("Количество");
     private final Label _headPriceLabel = new Label("Закуп. цена");
     private final Label _headSellPriceLabel = new Label("Цена продажи");
@@ -60,6 +61,7 @@ class MaterialsForm
     private TextField _thiknessTextField;
     private TextField _priceTextField;
     private TextField _sellPriceTextField;
+    private TextField _colorNumberTextField;
     public static final String CONSUMPTION = "Расход";
     public static final String INCOMING = "Приход";
 
@@ -620,6 +622,11 @@ class MaterialsForm
         thicknessCol.setStyle("-fx-alignment: CENTER;");
         thicknessCol.prefWidthProperty().bind(thicknessCol.widthProperty());
 
+        TableColumn<Material, Integer> colorNumberCol = new TableColumn<>("Номер цвета");
+        colorNumberCol.setCellValueFactory(new PropertyValueFactory<>("_colorNumber"));
+        colorNumberCol.setStyle("-fx-alignment: CENTER;");
+        colorNumberCol.prefWidthProperty().bind(colorNumberCol.widthProperty());
+
         TableColumn<Material, Integer> attributeCol = new TableColumn<>("Атрибут");
         attributeCol.setCellValueFactory(new PropertyValueFactory<>("_attribute"));
         attributeCol.setStyle("-fx-alignment: CENTER;");
@@ -724,6 +731,9 @@ class MaterialsForm
                     if(kind.get_manufacturer())
                         tableView.getColumns().add(manufacturerCol);
                     break;
+                case "Номер цвета":
+                    if(kind.get_colorNumber())
+                        tableView.getColumns().add(colorNumberCol);
             }
         }
     }
@@ -816,10 +826,9 @@ class MaterialsForm
 
     private void addMaterialForm(MaterialsKind materialsKind)
     {
-        System.out.println("add material");
         _addMaterialStage = new Stage();
         BorderPane addMaterialBorderPane = new BorderPane();
-        Scene addMaterialScene = new Scene(addMaterialBorderPane, 330,350);
+        Scene addMaterialScene = new Scene(addMaterialBorderPane, 400,500);
         VBox centerVBox = new VBox();
         VBox bottomVBox = new VBox();
         AnchorPane buttonsAnchorPane = new AnchorPane();
@@ -835,6 +844,7 @@ class MaterialsForm
         _thiknessTextField = new TextField();
         _priceTextField = new TextField(String.valueOf(0));
         _sellPriceTextField = new TextField(String.valueOf(0));
+        _colorNumberTextField = new TextField();
 
         Pattern pattern = Pattern.compile("\\d*|\\d+\\.\\d*");
         TextFormatter formatter = new TextFormatter((UnaryOperator<TextFormatter.Change>) change ->
@@ -848,6 +858,7 @@ class MaterialsForm
         _thiknessTextField.setTextFormatter(formatter);
         _priceTextField.textProperty().addListener(getChangeListener(_priceTextField));
         _sellPriceTextField.textProperty().addListener(getChangeListener(_sellPriceTextField));
+        _colorNumberTextField.textProperty().addListener(getChangeListener(_colorNumberTextField));
 
         initializationComboBox();
 
@@ -865,36 +876,24 @@ class MaterialsForm
                 material.set_kind(_kindComboBox.getSelectionModel().getSelectedItem().get_id());
                 if(_manufacturerComboBox.isVisible() &&
                         _manufacturerComboBox.getSelectionModel().getSelectedItem() != null)
-                {
                     material.set_manufacturer(_manufacturerComboBox.getSelectionModel().getSelectedItem().get_id());
-                }
                 if(_widthTextField.isVisible())
-                {
                     material.set_width(Integer.parseInt(_widthTextField.getText()));
-                }
-                if(_heightTextField.isVisible() && !_heightTextField.getText().equals(""))
-                {
+                if(_heightTextField.isVisible() && !_heightTextField.getText().isEmpty())
                     material.set_height(Integer.parseInt(_heightTextField.getText()));
-                }
                 if(_colorComboBox.isVisible() &&
                         _colorComboBox.getSelectionModel().getSelectedItem() != null)
-                {
                     material.set_color(_colorComboBox.getSelectionModel().getSelectedItem().get_id());
-                }
                 if(_propertyComboBox.isVisible() &&
                         _propertyComboBox.getSelectionModel().getSelectedItem() != null)
-                {
                     material.set_property(_propertyComboBox.getSelectionModel().getSelectedItem().get_id());
-                }
-                if(_thiknessTextField.isVisible() && !_thiknessTextField.getText().equals(""))
-                {
+                if(_thiknessTextField.isVisible() && !_thiknessTextField.getText().isEmpty())
                     material.set_thickness(Float.parseFloat(_thiknessTextField.getText()));
-                }
                 if(_attributeComboBox.isVisible() &&
                         _attributeComboBox.getSelectionModel().getSelectedItem() != null)
-                {
                     material.set_attribute(_attributeComboBox.getSelectionModel().getSelectedItem().get_id());
-                }
+                if (_colorNumberTextField.isVisible() && !_colorNumberTextField.getText().isEmpty())
+                    material.set_colorNumber(Integer.parseInt(_colorNumberTextField.getText()));
                 material.set_quantity(Integer.parseInt(_quantityTextField.getText()));
                 if (_priceTextField.getText().isEmpty())
                     material.set_price(0);
@@ -910,7 +909,6 @@ class MaterialsForm
                 material.set_absence(true);
                 if(DataBaseStorehouse.addMaterial(material))
                 {
-                    System.out.println("add material to DB");
                     material.set_id(
                             DataBaseStorehouse.getLastId(DataBaseStorehouse.MATERIALS_TABLE));
                     _activeMaterialsList.add(material);
@@ -992,6 +990,7 @@ class MaterialsForm
         _propertyComboBox.setVisible(false);
         _thiknessTextField.setVisible(false);
         _attributeComboBox.setVisible(false);
+        _colorNumberTextField.setVisible(false);
 
         _kindComboBox.setValue(kind);
 
@@ -1048,12 +1047,19 @@ class MaterialsForm
             _attributeComboBox.setVisible(true);
         }
 
-        _selectedValueGridPane.add(_headQuantityLabel,0,7);
-        _selectedValueGridPane.add(_quantityTextField,1,7);
-        _selectedValueGridPane.add(_headPriceLabel, 0, 8);
-        _selectedValueGridPane.add(_priceTextField, 1,8);
-        _selectedValueGridPane.add(_headSellPriceLabel, 0, 9);
-        _selectedValueGridPane.add(_sellPriceTextField, 1, 9);
+        if (_kindComboBox.getSelectionModel().getSelectedItem().get_colorNumber())
+        {
+            _selectedValueGridPane.add(_headColorNumberLabel, 0, 7);
+            _selectedValueGridPane.add(_colorNumberTextField, 1, 7);
+            _colorNumberTextField.setVisible(true);
+        }
+
+        _selectedValueGridPane.add(_headQuantityLabel,0,8);
+        _selectedValueGridPane.add(_quantityTextField,1,8);
+        _selectedValueGridPane.add(_headPriceLabel, 0, 9);
+        _selectedValueGridPane.add(_priceTextField, 1,9);
+        _selectedValueGridPane.add(_headSellPriceLabel, 0, 10);
+        _selectedValueGridPane.add(_sellPriceTextField, 1, 10);
 
         _selectedValueGridPane.alignmentProperty().set(Pos.CENTER);
     }
@@ -1062,7 +1068,7 @@ class MaterialsForm
     {
         Stage editMaterialStage = new Stage();
         BorderPane editMaterialBorderPane = new BorderPane();
-        Scene editMaterialScene = new Scene(editMaterialBorderPane, 300,600);
+        Scene editMaterialScene = new Scene(editMaterialBorderPane, 300,500);
         VBox centerVBox = new VBox();
         VBox bottomVBox = new VBox();
         AnchorPane bottomAnchorPane = new AnchorPane();
@@ -1264,7 +1270,7 @@ class MaterialsForm
         addKindMenuItem.setOnAction(event ->
         {
             MaterialsKindDialog kindDialog = new MaterialsKindDialog();
-            kindDialog.showAndWait(_addMaterialStage);
+            kindDialog.showAndWait(editMaterialStage);
             if(kindDialog.is_ok())
             {
                 Finder.get_allMaterialsKinds().add(kindDialog.get_kind());
@@ -1644,21 +1650,18 @@ class MaterialsForm
     {
         boolean check = false;
         if(_kindComboBox.getValue() == null)
-        {
             MainInterface.getAlertWarningDialog("Не выбран материал");
-        } else if (_widthTextField.isVisible() && _widthTextField.getText().equals(""))
-        {
+        else if (_widthTextField.isVisible() && _widthTextField.getText().isEmpty())
             MainInterface.getAlertWarningDialog("Не указана ширина материала");
-        } else if(_quantityTextField.getText().equals(""))
+        else if (_colorNumberTextField.isVisible() && _colorNumberTextField.getText().isEmpty())
+            MainInterface.getAlertWarningDialog("Не указан номер цвета");
+        else if(_quantityTextField.getText().equals(""))
         {
-            //MainInterface.getAlertWarningDialog("Не указано количество");
             _quantityTextField.setText("0");
             check = true;
         }
         else
-        {
             check = true;
-        }
 
         return check;
     }

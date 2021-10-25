@@ -22,7 +22,7 @@ public class Main extends Application
     public static String path = file.getAbsolutePath();
     private int currAccount = -1;
     static int primaryVersion = 4;
-    static int secondaryVersion = 24;
+    static int secondaryVersion = 27;
     private TextField _loginTextField;
     private PasswordField _passwordField;
     private TextField _passTextField;
@@ -331,13 +331,13 @@ public class Main extends Application
             }
         }
 
-        /*
-        fileImg = new File(DataBase.path + "\\src\\images\\8.png");
+
+        fileImg = new File(DataBase.path + "\\src\\images\\dr.png");
         if(!fileImg.isFile())
         {
             try
             {
-                BufferedImage bufferedImage = ImageIO.read(DataBase.getImage(9));
+                BufferedImage bufferedImage = ImageIO.read(DataBase.getImage(13));
                 ImageIO.write(bufferedImage, "PNG",fileImg);
             }
             catch (IOException e)
@@ -345,7 +345,21 @@ public class Main extends Application
                 e.printStackTrace();
             }
         }
-         */
+
+        fileImg = new File(DataBase.path + "\\src\\images\\dr2.jpg");
+        if(!fileImg.isFile())
+        {
+            try
+            {
+                BufferedImage bufferedImage = ImageIO.read(DataBase.getImage(14));
+                ImageIO.write(bufferedImage, "JPG",fileImg);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
 
         fileImg = new File(DataBase.path + "\\icons\\error.png");
         if(!fileImg.isFile())

@@ -34,6 +34,7 @@ public class EditMaterialDialog
     private TextField _thiknessTextField;
     private TextField _priceTextField;
     private TextField _sellPriceTextField;
+    private TextField _colorNumberTextField;
 
     EditMaterialDialog(Material material)
     {
@@ -80,6 +81,7 @@ public class EditMaterialDialog
         Label headPropertyLabel = new Label("Свойство");
         Label headThicknessLabel = new Label("Толщина");
         Label headAttributeLabel = new Label("Атрибут");
+        Label headColorNumberLabel = new Label("Номер цвета");
         Label headPriceLabel = new Label("Закуп. цена");
         Label headSellPriceLabel = new Label("Цена продажи");
         _widthTextField = new TextField();
@@ -87,6 +89,7 @@ public class EditMaterialDialog
         _thiknessTextField = new TextField();
         _priceTextField = new TextField(String.valueOf(0));
         _sellPriceTextField = new TextField(String.valueOf(0));
+        _colorNumberTextField = new TextField();
         MaterialsKind kind = Finder.getMaterialKind(_material.get_kind());
 
         Pattern pattern = Pattern.compile("\\d*|\\d+\\.\\d*");
@@ -100,6 +103,7 @@ public class EditMaterialDialog
         _thiknessTextField.setTextFormatter(formatter);
         _priceTextField.textProperty().addListener(MaterialsForm.getChangeListener(_priceTextField));
         _sellPriceTextField.textProperty().addListener(MaterialsForm.getChangeListener(_sellPriceTextField));
+        _colorNumberTextField.textProperty().addListener(MaterialsForm.getChangeListener(_colorNumberTextField));
 
         initializationComboBox();
         initializationAddButtons();
@@ -159,10 +163,17 @@ public class EditMaterialDialog
             centerGridPane.add(_addAttributeButton, 2,7);
         }
 
-        centerGridPane.add(headPriceLabel, 0, 8);
-        centerGridPane.add(_priceTextField, 1,8);
-        centerGridPane.add(headSellPriceLabel, 0, 9);
-        centerGridPane.add(_sellPriceTextField, 1, 9);
+        if (kind.get_colorNumber())
+        {
+            centerGridPane.add(headColorNumberLabel, 0, 8);
+            centerGridPane.add(_colorNumberTextField, 1, 8);
+            _colorNumberTextField.setText(String.valueOf(_material.get_colorNumber()));
+        }
+
+        centerGridPane.add(headPriceLabel, 0, 9);
+        centerGridPane.add(_priceTextField, 1,9);
+        centerGridPane.add(headSellPriceLabel, 0, 10);
+        centerGridPane.add(_sellPriceTextField, 1, 10);
         _priceTextField.setText(String.valueOf(_material.get_price()));
         _sellPriceTextField.setText(String.valueOf(_material.get_sellPrice()));
 
@@ -209,6 +220,9 @@ public class EditMaterialDialog
 
             if(kind.get_attribute() && _attributeComboBox.getSelectionModel().getSelectedItem() != null)
                 _material.set_attribute(_attributeComboBox.getSelectionModel().getSelectedItem().get_id());
+
+            if (kind.get_colorNumber() && !_colorNumberTextField.getText().isEmpty())
+                _material.set_colorNumber(Integer.parseInt(_colorNumberTextField.getText()));
 
             if(_priceTextField.getText().isEmpty())
                 _material.set_price(0);
