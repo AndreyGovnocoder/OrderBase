@@ -294,7 +294,6 @@ public class LedsDialog
     private void set_led()
     {
         _led.set_name(_nameTextField.getText());
-        //_led.set_kind(_ledKindComboBox.getValue().get_id());
         _led.set_kind(_ledKindComboBox2.getValue().get_id());
         if(_luminousFluxTextField.getText().isEmpty())
             _led.set_luminousFlux(0);

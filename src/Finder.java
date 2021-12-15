@@ -1,7 +1,12 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 public class Finder
 {
+    static Settings _settings;
     final static int A4 = 1;
     final static int A5 = 2;
     static boolean _isFormatA5 = false;
@@ -30,6 +35,9 @@ public class Finder
     private static ArrayList<Receipt> _allReceipts;
     private static ArrayList<Request> _allRequests;
     private static ArrayList<RequestStatus> _requestStatuses;
+    private static ArrayList<LedStrip> _allLedStrips;
+    private static ArrayList<MaterialsValue> _allQuantityAndTypes;
+    private static ArrayList<MaterialsValue> _allDegProtections;
 
     public static ArrayList<Machine> get_allMachinesArrayList()
     {
@@ -117,11 +125,22 @@ public class Finder
         return _allBodiesList;
     }
     public static ArrayList<Request> get_allRequests()
+
     {
         return _allRequests;
     }
+    public static ArrayList<LedStrip> get_allLedStrips() {return _allLedStrips;}
+    public static ArrayList<MaterialsValue> get_allQuantityAndTypes() {return _allQuantityAndTypes;}
+    public static ArrayList<MaterialsValue> get_allDegProtections() {return _allDegProtections;}
+
 
     Finder()
+    {
+        loadDataFromDB();
+        loadSettings();
+    }
+
+    static void loadDataFromDB()
     {
         _allMachinesArrayList = DataBaseStorehouse.getMachinesList();
         _allInksArrayList = DataBaseStorehouse.getInksList();
@@ -147,8 +166,71 @@ public class Finder
         _allPowersList = DataBaseStorehouse.getMaterialsValuesList(DataBaseStorehouse.POWERS_TABLE);
         _allRequests = DataBaseStorehouse.getRequestList();
         _requestStatuses = DataBaseStorehouse.getRequestStatusList();
+        _allLedStrips = DataBaseStorehouse.getLedStripsArrayList();
+        _allQuantityAndTypes = DataBaseStorehouse.getMaterialsValuesList(DataBaseStorehouse.LEDSTRIP_TYPES_TABLE);
+        _allDegProtections = DataBaseStorehouse.getMaterialsValuesList(DataBaseStorehouse.LEDSTRIP_DEGPROTECT_TABLE);
         _isFormatA4 = DataBase.getPaperFormat(A4);
         _isFormatA5 = DataBase.getPaperFormat(A5);
+    }
+
+    private static void loadSettings()
+    {
+        System.out.println("load settings");
+        String path = DataBase.path + "\\src\\settings.ser";
+        if (new File(path).isFile())
+        {
+            try
+            {
+                ObjectInputStream objectInputStream = new ObjectInputStream(
+                        new FileInputStream(path));
+
+                    _settings = (Settings) objectInputStream.readObject();
+
+                objectInputStream.close();
+            }
+            catch (IOException | ClassNotFoundException e)
+            {
+                e.printStackTrace();
+                _settings = new Settings();
+            }
+
+        }
+        else
+        {
+            _settings = new Settings();
+            System.out.println("file is NOT exist");
+        }
+    }
+
+    static LedStrip getLedStrip(int ledStripId)
+    {
+        for (LedStrip ledStrip : _allLedStrips)
+        {
+            if (ledStrip.get_id() == ledStripId)
+                return ledStrip;
+        }
+
+        return null;
+    }
+
+    static MaterialsValue getQuantityAndType(int id)
+    {
+        for (MaterialsValue value : _allQuantityAndTypes)
+        {
+            if (value.get_id() == id)
+                return value;
+        }
+        return null;
+    }
+
+    static MaterialsValue getDegProtection(int id)
+    {
+        for (MaterialsValue value : _allDegProtections)
+        {
+            if (value.get_id() == id)
+                return value;
+        }
+        return null;
     }
 
     static Request getRequest(int requestId)

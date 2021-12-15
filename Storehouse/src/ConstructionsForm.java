@@ -15,6 +15,7 @@ import javafx.util.Callback;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Properties;
 
 public class ConstructionsForm
 {
@@ -60,6 +61,13 @@ public class ConstructionsForm
         _constructionsFormStage.setScene(_constructionsFormScene);
         _constructionsFormStage.setTitle("Конструкции");
         _constructionsFormStage.getIcons().add(MainInterface.getIconLogo());
+        _constructionsFormStage.setOnCloseRequest(event ->
+        {
+            saveConstructTableColsWidth();
+            saveConstructTableAccountingsColsWidth();
+            saveConstructStageSize(_constructionsFormStage);
+        });
+        loadConstructStageSize(_constructionsFormStage);
         _constructionsFormStage.showAndWait();
     }
 
@@ -99,7 +107,13 @@ public class ConstructionsForm
         Button closeButton = new Button("Закрыть");
 
         closeButton.setPrefWidth(80);
-        closeButton.setOnAction(event ->_constructionsFormStage.close());
+        closeButton.setOnAction(event ->
+        {
+            saveConstructTableColsWidth();
+            saveConstructTableAccountingsColsWidth();
+            saveConstructStageSize(_constructionsFormStage);
+            _constructionsFormStage.close();
+        });
 
         //bottomAnchorPane.getChildren().addAll(calcConsumptionBtn, closeButton);
         bottomAnchorPane.getChildren().addAll(closeButton);
@@ -132,7 +146,7 @@ public class ConstructionsForm
         quantityCol.setStyle("-fx-alignment: CENTER;");
 
         _constructionsTableView.setPlaceholder(new Text("Конструкции отсутствуют"));
-        _constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
         _constructionsTableView.getColumns().addAll(
                 nameCol,
                 manufacturerCol,
@@ -214,6 +228,8 @@ public class ConstructionsForm
         for (Construction construction : Finder.get_constructionsList())
             if( construction.isActive())
                 _constructionsTableView.getItems().add(construction);
+
+        loadConstructTableColsWidth();
     }
 
     private void setConstrAccountingsTableView()
@@ -371,8 +387,9 @@ public class ConstructionsForm
 
         _constrAccountingsTableView.setPlaceholder(new Text("Данные отсутствуют"));
         _constrAccountingsTableView.setItems(FXCollections.observableArrayList(_constrAccountingsList));
-        _constrAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_constrAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
         _constrAccountingsTableView.scrollTo(_constrAccountingsTableView.getItems().size()-1);
+        loadConstructTableAccountingsColsWidth();
     }
 
     private void setContextMenu()
@@ -415,7 +432,7 @@ public class ConstructionsForm
                             accounting.set_id(DataBaseStorehouse.getLastId(DataBaseStorehouse.CONSTR_ACCOUNTINGS_TABLE));
                             _constrAccountingsList.add(accounting);
                             _constrAccountingsTableView.getItems().add(accounting);
-                            _constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                             _descriptionTextArea.clear();
                         }
                     }
@@ -436,7 +453,7 @@ public class ConstructionsForm
                 {
                     Finder.get_constructionsList().set(indexInArray, constructionDialog.get_construction());
                     _constructionsTableView.getItems().set(indexInTableView, constructionDialog.get_construction());
-                    _constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                    //_constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                     refreshConstrAccTableView();
                     _descriptionTextArea.clear();
                 }
@@ -458,7 +475,7 @@ public class ConstructionsForm
                         {
                             Finder.get_constructionsList().set(indexInArray, construction);
                             _constructionsTableView.getItems().remove(construction);
-                            _constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                             _descriptionTextArea.clear();
                         }
                     } else
@@ -467,7 +484,7 @@ public class ConstructionsForm
                         {
                             Finder.get_constructionsList().remove(construction);
                             _constructionsTableView.getItems().remove(construction);
-                            _constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                             _descriptionTextArea.clear();
                         }
                     }
@@ -513,7 +530,7 @@ public class ConstructionsForm
                         {
                             Finder.get_constructionsList().set(indexInArray, construction);
                             _constructionsTableView.getItems().set(indexInTableView, construction);
-                            _constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                         }
                     }
                 }
@@ -549,7 +566,7 @@ public class ConstructionsForm
                         {
                             Finder.get_constructionsList().set(indexInArray, construction);
                             _constructionsTableView.getItems().set(indexInTableView, construction);
-                            _constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_constructionsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                         }
                     }
                 }
@@ -632,6 +649,123 @@ public class ConstructionsForm
     {
         _constrAccountingsTableView.getItems().clear();
         _constrAccountingsTableView.getItems().addAll(FXCollections.observableArrayList(_constrAccountingsList));
-        _constrAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_constrAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    private void saveConstructTableColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_constructionsTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _constructionsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _constructionsTableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_constructionsTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < _constructionsTableView.getColumns().size(); ++i)
+                tableColumnsWidthProp.put(String.valueOf(i), _constructionsTableView.getColumns().get(i).getWidth());
+        }
+    }
+
+    private void loadConstructTableColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_constructionsTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < _constructionsTableView.getColumns().size(); ++i)
+                {
+                    //System.out.println("col " + i + ": " + (double)tableProperties.get(String.valueOf(i)));
+                    _constructionsTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                _constructionsTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void saveConstructTableAccountingsColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_constrAccountingsTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _constrAccountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _constrAccountingsTableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_constrAccountingsTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < _constrAccountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _constrAccountingsTableView.getColumns().get(i).getWidth());
+            }
+        }
+    }
+
+    private void loadConstructTableAccountingsColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_constrAccountingsTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < _constrAccountingsTableView.getColumns().size(); ++i)
+                {
+                    _constrAccountingsTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                _constrAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void saveConstructStageSize(Stage constructStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("constructStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", constructStage.getWidth());
+            propertiesStageSizes.put("height", constructStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("constructStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", constructStage.getWidth());
+            propertiesStageSizes.put("height", constructStage.getHeight());
+        }
+    }
+
+    private void loadConstructStageSize(Stage constructStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("constructStage");
+            if (properties != null && properties.size() > 0)
+            {
+                constructStage.setWidth((double)properties.get("width"));
+                constructStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
     }
 }

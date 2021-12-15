@@ -33,23 +33,20 @@ import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
 
 class MainInterface
 {
     private final Stage _mainStage;
     private Scene _mainScene;
+    private BorderPane _mainBorderPane;
     private static int _currentAccount;
     //static private ArrayList<Order> _allOrders;
     //static private ArrayList<Client> _allClients;
@@ -92,6 +89,7 @@ class MainInterface
     final static DollarRate _currDollarRate;
     final static DecimalFormat DF = new DecimalFormat("#.##");
 
+
     final Finder finder = new Finder();
 
     static
@@ -119,6 +117,7 @@ class MainInterface
 
     MainInterface(Stage stage)
     {
+
         this._mainStage = stage;
         _activeClients = new ArrayList<>();
         for (final Client client : Finder.get_allClients())
@@ -132,11 +131,11 @@ class MainInterface
 
     void show()
     {
-        BorderPane mainBorderPane = new BorderPane();
-        _mainScene = new Scene(mainBorderPane, 890, 900);
-        mainBorderPane.setTop(getTop());
-        mainBorderPane.setCenter(getCenter());
-        mainBorderPane.setBottom(getBottom());
+        _mainBorderPane = new BorderPane();
+        _mainScene = new Scene(_mainBorderPane, 890, 900);
+        _mainBorderPane.setTop(getTop());
+        _mainBorderPane.setCenter(getCenter());
+        _mainBorderPane.setBottom(getBottom());
         Account currAcc = DataBase.getAccount(get_currentAccount());
         _mainStage.setTitle(
                 "EXPERTPrint: База заказов (ver. " + Main.primaryVersion + "." + Main.secondaryVersion + ") " +
@@ -146,10 +145,26 @@ class MainInterface
         _mainStage.setOnCloseRequest(event ->
         {
             if (getAlertAskConfirmationDialog("Закрыть программу?"))
+            {
+                saveMainStageSize();
                 _mainStage.close();
+
+                try
+                {
+                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                            new FileOutputStream(DataBase.path + "\\src\\settings.ser"));
+                    objectOutputStream.writeObject(Finder._settings);
+                    objectOutputStream.close();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
             else
                 event.consume();
         });
+        loadMainStageSize();
         _mainStage.show();
 
         for (final int ver : UpdateInfo.getUpdatesList())
@@ -160,6 +175,7 @@ class MainInterface
                 final String updateDescription = UpdateInfo.getUpdateDescription(ver);
                 final String primVer = UpdateInfo.getVersion(ver, true);
                 final String secondVer = UpdateInfo.getVersion(ver, false);
+                System.out.println("primVer: " + primVer);
                 if(showUpdateInfo(updateDescription, primVer, secondVer))
                 {
                     currAcc.setInformedVers(ver);
@@ -186,6 +202,7 @@ class MainInterface
         Menu lightingMenu = new Menu("Светотехника");
         MenuItem ledsMenuItem = new MenuItem("Светодиоды");
         MenuItem powerSuppliesMenuItem = new MenuItem("Блоки питания");
+        MenuItem ledStripsMenuItem = new MenuItem("Светодиодные ленты");
         Menu montages = new Menu("Монтажи");
         MenuItem montagesShow = new MenuItem("Показать монтажи");
         MenuItem constructionsMenuItem = new MenuItem("Конструкции");
@@ -214,6 +231,11 @@ class MainInterface
         {
             PowerModulesForm powerModulesForm = new PowerModulesForm();
             powerModulesForm.showAndWait(_mainStage);
+        });
+        ledStripsMenuItem.setOnAction(event ->
+        {
+            LedStripForm ledStripForm = new LedStripForm();
+            ledStripForm.showAndWait(_mainStage);
         });
 
         montagesShow.setOnAction(event ->
@@ -245,7 +267,7 @@ class MainInterface
 
         staffsMenu.getItems().add(staffsListMenuItem);
         clientsMenu.getItems().add(clientsListMenuItem);
-        lightingMenu.getItems().addAll(ledsMenuItem, powerSuppliesMenuItem);
+        lightingMenu.getItems().addAll(ledsMenuItem, powerSuppliesMenuItem, ledStripsMenuItem);
         storehouseMenu.getItems().addAll(
                 materialsMenuItem,
                 inksMenuItem,
@@ -310,6 +332,7 @@ class MainInterface
         VBox bottomVBox = new VBox();
         Button createOrderButton = new Button("Создать заказ");
         Button printReceiptButton = new Button("Печать квитанции");
+        Button refreshDataButton = new Button("Обновить данные");
 
         createOrderButton.setOnAction(event ->
         {
@@ -350,10 +373,15 @@ class MainInterface
             }
         });
 
-        buttonsPane.getChildren().addAll(createOrderButton, printReceiptButton);
+        refreshDataButton.setOnAction(event -> refreshData() );
+
+        buttonsPane.getChildren().addAll(createOrderButton, refreshDataButton, printReceiptButton);
         AnchorPane.setTopAnchor(createOrderButton, 5.0);
         AnchorPane.setLeftAnchor(createOrderButton, 5.0);
         AnchorPane.setBottomAnchor(createOrderButton, 5.0);
+        AnchorPane.setTopAnchor(refreshDataButton, 5.0);
+        AnchorPane.setLeftAnchor(refreshDataButton, 105.0);
+        AnchorPane.setBottomAnchor(refreshDataButton, 5.0);
         AnchorPane.setTopAnchor(printReceiptButton, 5.0);
         AnchorPane.setRightAnchor(printReceiptButton, 5.0);
         AnchorPane.setBottomAnchor(printReceiptButton, 5.0);
@@ -950,23 +978,28 @@ class MainInterface
             }
         });
 
-        closeButton.setOnAction(event -> clientsStage.close());
+        closeButton.setOnAction(event ->
+        {
+            saveClientsStageSize(clientsStage);
+            saveClientsTableColsWidth();
+            clientsStage.close();
+        });
 
         contextMenuClients.getItems().addAll(menuItemDeleteClient, menuItemEditClient);
 
         _clientsTableView.setPlaceholder(new Text("Список клиентов пуст"));
         TableColumn<Client, String> nameCol = new TableColumn<Client, String>("Клиент");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("_name"));
-        nameCol.prefWidthProperty().bind(clientsScene.widthProperty().multiply(0.3));
+        //nameCol.prefWidthProperty().bind(clientsScene.widthProperty().multiply(0.3));
         TableColumn<Client, String> phoneCol = new TableColumn<Client, String>("Телефон");
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("_phone"));
-        phoneCol.prefWidthProperty().bind(clientsScene.widthProperty().multiply(0.27));
+        //phoneCol.prefWidthProperty().bind(clientsScene.widthProperty().multiply(0.27));
         TableColumn<Client, String> mailCol = new TableColumn<Client, String>("E-mail");
         mailCol.setCellValueFactory(new PropertyValueFactory<>("_mail"));
-        mailCol.prefWidthProperty().bind(clientsScene.widthProperty().multiply(0.2));
+        //mailCol.prefWidthProperty().bind(clientsScene.widthProperty().multiply(0.2));
         TableColumn<Client, String> contactPersonCol = new TableColumn<>("Контактное лицо");
         contactPersonCol.setCellValueFactory(new PropertyValueFactory<>("_contactPerson"));
-        contactPersonCol.prefWidthProperty().bind(clientsScene.widthProperty().multiply(0.19));
+        //contactPersonCol.prefWidthProperty().bind(clientsScene.widthProperty().multiply(0.19));
         _clientsTableView.setItems(FXCollections.observableArrayList(_activeClients));
         _clientsTableView.getColumns().addAll(nameCol, phoneCol, mailCol, contactPersonCol);
         _clientsTableView.setRowFactory(new Callback<TableView<Client>, TableRow<Client>>()
@@ -1013,6 +1046,13 @@ class MainInterface
         clientsStage.setScene(clientsScene);
         clientsStage.setMinWidth(500);
         clientsStage.setMinHeight(400);
+        clientsStage.setOnCloseRequest(event ->
+        {
+            saveClientsStageSize(clientsStage);
+            saveClientsTableColsWidth();
+        });
+        loadClientsTableColsWidth();
+        loadClientsStageSize(clientsStage);
         clientsStage.show();
     }
 
@@ -1851,6 +1891,14 @@ class MainInterface
         return logoImage;
     }
 
+    private void refreshData()
+    {
+        Finder.loadDataFromDB();
+        clearOrderDetails();
+        _orderTableView.getItems().clear();
+        _mainBorderPane.setCenter(getCenter());
+    }
+
     void showcongratulations()
     {
         BorderPane borderPane = new BorderPane();
@@ -1950,5 +1998,113 @@ class MainInterface
 
         firstImageStage.showAndWait();
         stage.showAndWait();
+    }
+
+    private void saveMainStageSize()
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("_mainStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", _mainStage.getWidth());
+            propertiesStageSizes.put("height", _mainStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("_mainStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", _mainStage.getWidth());
+            propertiesStageSizes.put("height", _mainStage.getHeight());
+        }
+    }
+
+    private void loadMainStageSize()
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("_mainStage");
+            if (properties != null && properties.size() > 0)
+            {
+                _mainStage.setWidth((double)properties.get("width"));
+                _mainStage.setHeight((double)properties.get("height"));
+            }
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек" + ex.toString());
+        }
+    }
+
+    private void saveClientsTableColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_clientsTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            System.out.println("clients table settings is null");
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _clientsTableView.getColumns().size(); ++i)
+            {
+                System.out.println("col " + i + ": " + _clientsTableView.getColumns().get(i).getWidth());
+                tableColumnsWidthProp.put(String.valueOf(i), _clientsTableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_clientsTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            System.out.println("clients table settings is exist");
+            for (int i = 0; i < _clientsTableView.getColumns().size(); ++i)
+                tableColumnsWidthProp.put(String.valueOf(i), _clientsTableView.getColumns().get(i).getWidth());
+        }
+    }
+
+    private void loadClientsTableColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_clientsTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < _clientsTableView.getColumns().size(); ++i)
+                {
+                    _clientsTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void saveClientsStageSize(Stage clientsStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("clientsStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", clientsStage.getWidth());
+            propertiesStageSizes.put("height", clientsStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("clientsStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", clientsStage.getWidth());
+            propertiesStageSizes.put("height", clientsStage.getHeight());
+        }
+    }
+
+    private void loadClientsStageSize(Stage clientsStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("clientsStage");
+            if (properties != null && properties.size() > 0)
+            {
+                clientsStage.setWidth((double)properties.get("width"));
+                clientsStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
     }
 }

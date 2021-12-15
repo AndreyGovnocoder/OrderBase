@@ -20,6 +20,7 @@ import javafx.util.Callback;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class MaterialAccountingForm
 {
@@ -60,6 +61,12 @@ public class MaterialAccountingForm
         _accountingFormStage.setTitle("Учёт материалов");
         _accountingFormStage.getIcons().add(MainInterface.getIconLogo());
         _accountingFormStage.setScene(_accountingFormScene);
+        _accountingFormStage.setOnCloseRequest(event ->
+        {
+            saveMaterialsTableAccountingsColsWidth();
+            saveMatAccStageSize(_accountingFormStage);
+        });
+        loadMatAccStageSize(_accountingFormStage);
         _accountingFormStage.show();
     }
 
@@ -90,6 +97,7 @@ public class MaterialAccountingForm
             {
                 if(!kindTitledPane.isExpanded())
                 {
+                    saveMaterialsTableAccountingsColsWidth();
                     _accountingsTableViewVBox.getChildren().remove(_accountingsTableView);
                     _accountingsTableViewVBox.getChildren().add(getAccountingTableView(_accountings));
                 }
@@ -121,7 +129,12 @@ public class MaterialAccountingForm
         VBox bottomVBox = new VBox();
         Button closeBtn = new Button("Закрыть");
 
-        closeBtn.setOnAction(event -> _accountingFormStage.close());
+        closeBtn.setOnAction(event ->
+        {
+            saveMaterialsTableAccountingsColsWidth();
+            saveMatAccStageSize(_accountingFormStage);
+            _accountingFormStage.close();
+        });
 
         bottomAnchorPane.getChildren().addAll(closeBtn);
         AnchorPane.setTopAnchor(closeBtn, 5.0);
@@ -155,6 +168,7 @@ public class MaterialAccountingForm
                         accountingsByMaterial.add(accounting);
                 }
                 clearTextFields();
+                saveMaterialsTableAccountingsColsWidth();
                 _accountingsTableViewVBox.getChildren().remove(_accountingsTableView);
                 _accountingsTableViewVBox.getChildren().add(getAccountingTableView(accountingsByMaterial));
             });
@@ -326,10 +340,10 @@ public class MaterialAccountingForm
         _accountingsTableView.setPrefHeight(_accountingFormScene.getHeight()/1.4);
         _accountingsTableView.setPlaceholder(new Text("Данные отсутствуют"));
         _accountingsTableView.setItems(FXCollections.observableArrayList(accountingsList));
-        _accountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_accountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
         _accountingsTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         _accountingsTableView.scrollTo(_accountingsTableView.getItems().size()-1);
-
+        loadMaterialsTableAccountingsColsWidth();
         return _accountingsTableView;
     }
 
@@ -461,5 +475,81 @@ public class MaterialAccountingForm
         _propertyTextField.clear();
         _thicknessTextField.clear();
         _attributeTextField.clear();
+    }
+
+    private void saveMaterialsTableAccountingsColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_accountingsTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _accountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _accountingsTableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_accountingsTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < _accountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _accountingsTableView.getColumns().get(i).getWidth());
+            }
+        }
+    }
+
+    private void loadMaterialsTableAccountingsColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_accountingsTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < _accountingsTableView.getColumns().size(); ++i)
+                {
+                    _accountingsTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                _accountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void saveMatAccStageSize(Stage matAccStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("matAccStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", matAccStage.getWidth());
+            propertiesStageSizes.put("height", matAccStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("matAccStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", matAccStage.getWidth());
+            propertiesStageSizes.put("height", matAccStage.getHeight());
+        }
+    }
+
+    private void loadMatAccStageSize(Stage matAccStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("matAccStage");
+            if (properties != null && properties.size() > 0)
+            {
+                matAccStage.setWidth((double)properties.get("width"));
+                matAccStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
     }
 }

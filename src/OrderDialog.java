@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 class OrderDialog
 {
@@ -73,7 +74,10 @@ class OrderDialog
         _orderDialogStage.setOnCloseRequest(event ->
         {
             if(MainInterface.getAlertAskConfirmationDialog("Все несохранённые данные будут потеряны\n\nВы уверены?\n"))
+            {
+                saveStageSize();
                 _orderDialogStage.close();
+            }
             else
                 event.consume();
         });
@@ -86,6 +90,7 @@ class OrderDialog
         _orderDialogStage.initModality(Modality.WINDOW_MODAL);
         _orderDialogStage.initOwner(primaryStage);
         _orderDialogStage.setScene(_orderDialogScene);
+        loadStageSize();
         _orderDialogStage.showAndWait();
     }
 
@@ -345,6 +350,7 @@ class OrderDialog
         {
             if(MainInterface.getAlertAskConfirmationDialog("Все несохранённые данные будут потеряны\n\nВы уверены?"))
             {
+                saveStageSize();
                 _orderDialogStage.close();
             }
         });
@@ -677,5 +683,38 @@ class OrderDialog
         }
 
         return false;
+    }
+
+    private void loadStageSize()
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("_orderDialogStage");
+            if (properties != null && properties.size() > 0)
+            {
+                _orderDialogStage.setWidth((double)properties.get("width"));
+                _orderDialogStage.setHeight((double)properties.get("height"));
+            }
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек" + ex.toString());
+        }
+    }
+
+    private void saveStageSize()
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("_orderDialogStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", _orderDialogStage.getWidth());
+            propertiesStageSizes.put("height", _orderDialogStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("_orderDialogStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", _orderDialogStage.getWidth());
+            propertiesStageSizes.put("height", _orderDialogStage.getHeight());
+        }
     }
 }

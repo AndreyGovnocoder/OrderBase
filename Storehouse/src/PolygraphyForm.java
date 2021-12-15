@@ -1,5 +1,6 @@
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,6 +18,7 @@ import javafx.util.Callback;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Properties;
 
 public class PolygraphyForm
 {
@@ -60,6 +62,13 @@ public class PolygraphyForm
         _polygraphyFormStage.setScene(polygraphyFormScene);
         _polygraphyFormStage.setTitle("Полиграфия");
         _polygraphyFormStage.getIcons().add(MainInterface.getIconLogo());
+        _polygraphyFormStage.setOnCloseRequest(event ->
+        {
+            savePolygraphyTableColsWidth();
+            savePolygraphyTableAccountingsColsWidth();
+            savePolygraphyStageSize(_polygraphyFormStage);
+        });
+        loadPolygraphyStageSize(_polygraphyFormStage);
         _polygraphyFormStage.showAndWait();
     }
 
@@ -99,7 +108,13 @@ public class PolygraphyForm
         Button closeButton = new Button("Закрыть");
 
         closeButton.setPrefWidth(80);
-        closeButton.setOnAction(event ->_polygraphyFormStage.close());
+        closeButton.setOnAction(event ->
+        {
+            savePolygraphyTableColsWidth();
+            savePolygraphyTableAccountingsColsWidth();
+            savePolygraphyStageSize(_polygraphyFormStage);
+            _polygraphyFormStage.close();
+        });
 
         bottomAnchorPane.getChildren().addAll(closeButton);
         AnchorPane.setTopAnchor(closeButton, 5.0);
@@ -115,7 +130,7 @@ public class PolygraphyForm
     {
         TableColumn<Polygraphy, String> nameCol = new TableColumn<>("Название");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("_name"));
-        nameCol.setStyle("-fx-alignment: CENTER;");
+        nameCol.setStyle("-fx-alignment: " + Pos.CENTER_LEFT +";");
 
         TableColumn<Polygraphy, Integer> priceCol = new TableColumn<>("Цена");
         priceCol.setCellValueFactory(new PropertyValueFactory<>("_price"));
@@ -126,7 +141,7 @@ public class PolygraphyForm
         quantityCol.setStyle("-fx-alignment: CENTER;");
 
         _polygraphyTableView.setPlaceholder(new Text("Полиграфия отсутствует"));
-        _polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
         _polygraphyTableView.getColumns().addAll(
                 nameCol,
                 priceCol,
@@ -206,6 +221,8 @@ public class PolygraphyForm
         for (Polygraphy polygraphy : Finder.get_polygraphyList())
             if( polygraphy.isActive())
                 _polygraphyTableView.getItems().add(polygraphy);
+
+        loadPolygraphyTableColsWidth();
     }
 
     private void setPolygraphyAccountingsTableView()
@@ -325,8 +342,9 @@ public class PolygraphyForm
 
         _polygraphyAccountingsTableView.setPlaceholder(new Text("Данные отсутствуют"));
         _polygraphyAccountingsTableView.setItems(FXCollections.observableArrayList(_polygraphyAccountingsList));
-        _polygraphyAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_polygraphyAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
         _polygraphyAccountingsTableView.scrollTo(_polygraphyAccountingsTableView.getItems().size()-1);
+        loadPolygraphyTableAccountingsColsWidth();
     }
 
     private void setContextMenu()
@@ -369,7 +387,7 @@ public class PolygraphyForm
                             accounting.set_id(DataBaseStorehouse.getLastId(DataBaseStorehouse.POLYGRAPHY_ACCOUNTINGS_TABLE));
                             _polygraphyAccountingsList.add(accounting);
                             _polygraphyAccountingsTableView.getItems().add(accounting);
-                            _polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                             _descriptionTextArea.clear();
                         }
                     }
@@ -390,7 +408,7 @@ public class PolygraphyForm
                 {
                     Finder.get_polygraphyList().set(indexInArray, polygraphyDialog.get_polygraphy());
                     _polygraphyTableView.getItems().set(indexInTableView, polygraphyDialog.get_polygraphy());
-                    _polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                    //_polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                     refreshPolygraphyAccountingsTableView();
                     _descriptionTextArea.clear();
                 }
@@ -412,7 +430,7 @@ public class PolygraphyForm
                         {
                             Finder.get_polygraphyList().set(indexInArray, polygraphy);
                             _polygraphyTableView.getItems().remove(polygraphy);
-                            _polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                             _descriptionTextArea.clear();
                         }
                     } else
@@ -421,7 +439,7 @@ public class PolygraphyForm
                         {
                             Finder.get_polygraphyList().remove(polygraphy);
                             _polygraphyTableView.getItems().remove(polygraphy);
-                            _polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                             _descriptionTextArea.clear();
                         }
                     }
@@ -467,7 +485,7 @@ public class PolygraphyForm
                         {
                             Finder.get_polygraphyList().set(indexInArray, polygraphy);
                             _polygraphyTableView.getItems().set(indexInTableView, polygraphy);
-                            _polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                         }
                     }
                 }
@@ -503,7 +521,7 @@ public class PolygraphyForm
                         {
                             Finder.get_polygraphyList().set(indexInArray, polygraphy);
                             _polygraphyTableView.getItems().set(indexInTableView, polygraphy);
-                            _polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                            //_polygraphyTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                         }
                     }
                 }
@@ -576,6 +594,123 @@ public class PolygraphyForm
     {
         _polygraphyAccountingsTableView.getItems().clear();
         _polygraphyAccountingsTableView.getItems().addAll(FXCollections.observableArrayList(_polygraphyAccountingsList));
-        _polygraphyAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_polygraphyAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    private void savePolygraphyTableColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_polygraphyTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _polygraphyTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _polygraphyTableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_polygraphyTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < _polygraphyTableView.getColumns().size(); ++i)
+                tableColumnsWidthProp.put(String.valueOf(i), _polygraphyTableView.getColumns().get(i).getWidth());
+        }
+    }
+
+    private void loadPolygraphyTableColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_polygraphyTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < _polygraphyTableView.getColumns().size(); ++i)
+                {
+                    //System.out.println("col " + i + ": " + (double)tableProperties.get(String.valueOf(i)));
+                    _polygraphyTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                _polygraphyTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void savePolygraphyTableAccountingsColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_polygraphyAccountingsTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _polygraphyAccountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _polygraphyAccountingsTableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_polygraphyAccountingsTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < _polygraphyAccountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _polygraphyAccountingsTableView.getColumns().get(i).getWidth());
+            }
+        }
+    }
+
+    private void loadPolygraphyTableAccountingsColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_polygraphyAccountingsTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < _polygraphyAccountingsTableView.getColumns().size(); ++i)
+                {
+                    _polygraphyAccountingsTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                _polygraphyAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void savePolygraphyStageSize(Stage polygraphyStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("polygraphyStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", polygraphyStage.getWidth());
+            propertiesStageSizes.put("height", polygraphyStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("polygraphyStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", polygraphyStage.getWidth());
+            propertiesStageSizes.put("height", polygraphyStage.getHeight());
+        }
+    }
+
+    private void loadPolygraphyStageSize(Stage polygraphyStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("polygraphyStage");
+            if (properties != null && properties.size() > 0)
+            {
+                polygraphyStage.setWidth((double)properties.get("width"));
+                polygraphyStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
     }
 }

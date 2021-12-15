@@ -14,6 +14,7 @@ import javafx.util.Callback;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Properties;
 
 public class PowerModulesForm
 {
@@ -63,6 +64,13 @@ public class PowerModulesForm
         _powerModulesFormStage.setTitle("Блоки питания");
         _powerModulesFormStage.getIcons().add(MainInterface.getIconLogo());
         _powerModulesFormStage.setScene(_powerModulesFormScene);
+        _powerModulesFormStage.setOnCloseRequest(event ->
+        {
+            saveAllPowModuleColsWidth();
+            savePowModuleTableAccountingsColsWidth();
+            savePowModuleStageSize(_powerModulesFormStage);
+        });
+        loadPowModuleStageSize(_powerModulesFormStage);
         _powerModulesFormStage.showAndWait();
     }
 
@@ -110,7 +118,13 @@ public class PowerModulesForm
 
         editDataBtn.setOnAction(event -> editPowerModuleValuesForm());
 
-        closeBtn.setOnAction(event -> _powerModulesFormStage.close());
+        closeBtn.setOnAction(event ->
+        {
+            saveAllPowModuleColsWidth();
+            savePowModuleTableAccountingsColsWidth();
+            savePowModuleStageSize(_powerModulesFormStage);
+            _powerModulesFormStage.close();
+        });
 
         bottomAnchorPane.getChildren().addAll(editDataBtn, closeBtn);
         AnchorPane.setTopAnchor(editDataBtn, 5.0);
@@ -217,12 +231,14 @@ public class PowerModulesForm
         quantityCol.setStyle("-fx-alignment: CENTER;");
 
         pModuleTableView.setPlaceholder(new Text("Данные отсутствуют"));
-        pModuleTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        //pModuleTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         pModuleTableView.setContextMenu(getContextMenu(pModuleTableView));
         pModuleTableView.getColumns().addAll(nameCol, powerCol, priceInDollCol, priceInRubCol, quantityCol);
         for (PowerModule pModule : Finder.get_powerModulesList())
             if (pModule.is_active() && pModule.get_body() == bodyId)
                 pModuleTableView.getItems().add(pModule);
+        String name = "powModuleTableView_" + Finder.getBody(bodyId).get_name();
+        loadPowModuleTableColsWidth(pModuleTableView, name);
     }
 
     private void setPowModuleAccountingsTableView()
@@ -443,8 +459,9 @@ public class PowerModulesForm
         _pModuleAccountingsTableView.setContextMenu(getAccountingContextMenu());
         _pModuleAccountingsTableView.setPlaceholder(new Text("Данные отсутствуют"));
         _pModuleAccountingsTableView.setItems(FXCollections.observableArrayList(_pModuleAccuontingsList));
-        _pModuleAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_pModuleAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
         _pModuleAccountingsTableView.scrollTo(_pModuleAccountingsTableView.getItems().size()-1);
+        loadPowModuleTableAccountingsColsWidth();
     }
 
     private void setPriceColumns()
@@ -454,12 +471,16 @@ public class PowerModulesForm
             TableView<PowerModule> tableView = (TableView<PowerModule>)pane.getContent();
             if (tableView.getColumns().get(2).isVisible())
             {
+                double width = tableView.getColumns().get(2).getWidth();
                 tableView.getColumns().get(2).setVisible(false);
                 tableView.getColumns().get(3).setVisible(true);
+                tableView.getColumns().get(3).setPrefWidth(width);
             } else
             {
+                double width = tableView.getColumns().get(3).getWidth();
                 tableView.getColumns().get(2).setVisible(true);
                 tableView.getColumns().get(3).setVisible(false);
+                tableView.getColumns().get(2).setPrefWidth(width);
             }
         }
     }
@@ -748,7 +769,7 @@ public class PowerModulesForm
                         accounting.set_id(DataBaseStorehouse.getLastId(DataBaseStorehouse.POW_MODULE_ACCOUNTINGS_TABLE));
                         _pModuleAccuontingsList.add(accounting);
                         _pModuleAccountingsTableView.getItems().add(accounting);
-                        _pModuleAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                        //_pModuleAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                     }
                 }
             }
@@ -907,7 +928,7 @@ public class PowerModulesForm
     {
         _pModuleAccountingsTableView.getItems().clear();
         _pModuleAccountingsTableView.getItems().addAll(FXCollections.observableArrayList(_pModuleAccuontingsList));
-        _pModuleAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_pModuleAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     static Accordion getAccordion() { return _accordion; }
@@ -1175,5 +1196,132 @@ public class PowerModulesForm
         }
 
         return value;
+    }
+
+    private void saveAllPowModuleColsWidth()
+    {
+        for (TitledPane pane : _accordion.getPanes())
+        {
+            TableView<PowerModule> ledTableView = (TableView<PowerModule>) pane.getContent();
+            String name = "powModuleTableView_" + pane.getText();
+            savePowModuleTableColsWidth(ledTableView, name);
+        }
+    }
+
+    private void savePowModuleTableColsWidth(TableView<PowerModule> tableView, String name)
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth(name);
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < tableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), tableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths(name, tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < tableView.getColumns().size(); ++i)
+                tableColumnsWidthProp.put(String.valueOf(i), tableView.getColumns().get(i).getWidth());
+        }
+    }
+
+    private static void loadPowModuleTableColsWidth(TableView<PowerModule> tableView, String name)
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth(name);
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < tableView.getColumns().size(); ++i)
+                {
+                    //System.out.println("col " + i + ": " + (double)tableProperties.get(String.valueOf(i)));
+                    tableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void savePowModuleTableAccountingsColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_pModuleAccountingsTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _pModuleAccountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _pModuleAccountingsTableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_pModuleAccountingsTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < _pModuleAccountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _pModuleAccountingsTableView.getColumns().get(i).getWidth());
+            }
+        }
+    }
+
+    private void loadPowModuleTableAccountingsColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_pModuleAccountingsTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < _pModuleAccountingsTableView.getColumns().size(); ++i)
+                {
+                    _pModuleAccountingsTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                _pModuleAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void savePowModuleStageSize(Stage powModStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("powModStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", powModStage.getWidth());
+            propertiesStageSizes.put("height", powModStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("powModStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", powModStage.getWidth());
+            propertiesStageSizes.put("height", powModStage.getHeight());
+        }
+    }
+
+    private void loadPowModuleStageSize(Stage powModStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("powModStage");
+            if (properties != null && properties.size() > 0)
+            {
+                powModStage.setWidth((double)properties.get("width"));
+                powModStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
     }
 }

@@ -19,6 +19,7 @@ import javafx.util.Callback;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Properties;
 
 public class LedsForm
 {
@@ -58,11 +59,18 @@ public class LedsForm
         _ledsFormBorderPane.setCenter(getCenter());
         _ledsFormBorderPane.setBottom(getBottom());
 
+        _ledsFormStage.setOnCloseRequest(event ->
+        {
+            saveAllLedtablesColsWidth();
+            saveLedStageSize(_ledsFormStage);
+            saveLedTableAccountingsColsWidth();
+        });
         _ledsFormStage.initModality(Modality.WINDOW_MODAL);
         _ledsFormStage.initOwner(primaryStage);
         _ledsFormStage.setTitle("Светодиоды");
         _ledsFormStage.getIcons().add(MainInterface.getIconLogo());
         _ledsFormStage.setScene(_ledsFormScene);
+        loadLedStageSize(_ledsFormStage);
         _ledsFormStage.showAndWait();
     }
 
@@ -148,7 +156,13 @@ public class LedsForm
         VBox bottomVBox = new VBox();
         Button closeBtn = new Button("Закрыть");
 
-        closeBtn.setOnAction(event -> _ledsFormStage.close());
+        closeBtn.setOnAction(event ->
+        {
+            saveAllLedtablesColsWidth();
+            saveLedTableAccountingsColsWidth();
+            saveLedStageSize(_ledsFormStage);
+            _ledsFormStage.close();
+        });
 
         bottomAnchorPane.getChildren().addAll(closeBtn);
         AnchorPane.setTopAnchor(closeBtn, 5.0);
@@ -247,12 +261,15 @@ public class LedsForm
 
         tableView.setPlaceholder(new Text("Данные отсутствуют"));
         tableView.getColumns().addAll(nameCol, luminousFluxCol, powerCol, colorCol, priceInDollCol, priceInRubCol, quantityCol);
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        //tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setContextMenu(getLedsContextMenu(tableView));
+        String name = "ledTableView_" + Finder.getLedKind(kindId).get_name();
+        loadLedTableColsWidth(tableView, name);
     }
 
     private void setLedAccountingsTableView()
     {
+        System.out.println("in setLedAccountingsTableView");
         TableColumn<LedAccounting, LocalDateTime> dateCol = new TableColumn<>("Дата");
         dateCol.setStyle("-fx-alignment: CENTER;");
         dateCol.setCellValueFactory(new PropertyValueFactory<>("_dateTime"));
@@ -437,8 +454,9 @@ public class LedsForm
 
         _ledAccountingsTableView.setPlaceholder(new Text("Данные отсутствуют"));
         _ledAccountingsTableView.setItems(FXCollections.observableArrayList(_ledAccountingsList));
-        _ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
         _ledAccountingsTableView.scrollTo(_ledAccountingsTableView.getItems().size()-1);
+        loadLedTableAccountingsColsWidth();
     }
 
     private void setTextFields()
@@ -459,12 +477,16 @@ public class LedsForm
             TableView<Led> tableView = (TableView<Led>)pane.getContent();
             if (tableView.getColumns().get(4).isVisible())
             {
+                double width = tableView.getColumns().get(4).getWidth();
                 tableView.getColumns().get(4).setVisible(false);
                 tableView.getColumns().get(5).setVisible(true);
+                tableView.getColumns().get(5).setPrefWidth(width);
             } else
             {
+                double width = tableView.getColumns().get(5).getWidth();
                 tableView.getColumns().get(4).setVisible(true);
                 tableView.getColumns().get(5).setVisible(false);
+                tableView.getColumns().get(4).setPrefWidth(width);
             }
         }
     }
@@ -533,7 +555,7 @@ public class LedsForm
                         accounting.set_id(DataBaseStorehouse.getLastId(DataBaseStorehouse.LED_ACCOUNTINGS_TABLE));
                         _ledAccountingsList.add(accounting);
                         _ledAccountingsTableView.getItems().add(accounting);
-                        _ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                        //_ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                         clearTextFields();
                     }
                 }
@@ -578,7 +600,7 @@ public class LedsForm
                         }
                     }
 
-                    _ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+                    //_ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
                     clearTextFields();
                     refreshLedAccTableView();
                 }
@@ -1060,6 +1082,139 @@ public class LedsForm
     {
         _ledAccountingsTableView.getItems().clear();
         _ledAccountingsTableView.getItems().addAll(FXCollections.observableArrayList(_ledAccountingsList));
-        _ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        //_ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    private void saveAllLedtablesColsWidth()
+    {
+        for (TitledPane pane : _accordion.getPanes())
+        {
+            TableView<Led> ledTableView = (TableView<Led>) pane.getContent();
+            String name = "ledTableView_" + pane.getText();
+            saveLedTableColsWidth(ledTableView, name);
+        }
+    }
+
+    private void saveLedTableColsWidth(TableView<Led> tableView, String name)
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth(name);
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < tableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), tableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths(name, tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < tableView.getColumns().size(); ++i)
+                tableColumnsWidthProp.put(String.valueOf(i), tableView.getColumns().get(i).getWidth());
+        }
+    }
+
+    private static void loadLedTableColsWidth(TableView<Led> tableView, String name)
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth(name);
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < tableView.getColumns().size(); ++i)
+                {
+                    //System.out.println("col " + i + ": " + (double)tableProperties.get(String.valueOf(i)));
+                    tableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void saveLedTableAccountingsColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_ledAccountingsTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _ledAccountingsTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _ledAccountingsTableView.getColumns().get(i).getWidth());
+            }
+            System.out.println("add new ledTableAcc prop");
+            Finder._settings.addPropertiesColWidths("_ledAccountingsTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            System.out.println("save led table accc in exist");
+            for (int i = 0; i < _ledAccountingsTableView.getColumns().size(); ++i)
+            {
+                System.out.println("save col " + i + ": " + _ledAccountingsTableView.getColumns().get(i).getWidth());
+                tableColumnsWidthProp.put(String.valueOf(i), _ledAccountingsTableView.getColumns().get(i).getWidth());
+            }
+        }
+    }
+
+    private void loadLedTableAccountingsColsWidth()
+    {
+        try
+        {
+            System.out.println("load ledAcc prop");
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_ledAccountingsTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                System.out.println("prop != null");
+                for (int i = 0; i < _ledAccountingsTableView.getColumns().size(); ++i)
+                {
+                    System.out.println("load col " + i + ": " + tableProperties.get(String.valueOf(i)));
+                    _ledAccountingsTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                _ledAccountingsTableView.columnResizePolicyProperty().set(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void saveLedStageSize(Stage ledStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("ledStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", ledStage.getWidth());
+            propertiesStageSizes.put("height", ledStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("ledStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", ledStage.getWidth());
+            propertiesStageSizes.put("height", ledStage.getHeight());
+        }
+    }
+
+    private void loadLedStageSize(Stage ledStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("ledStage");
+            if (properties != null && properties.size() > 0)
+            {
+                ledStage.setWidth((double)properties.get("width"));
+                ledStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
     }
 }

@@ -40,10 +40,14 @@ public class UpdateInfo
     private final static String updateDescription_4_25 = "Список материалов теперь сортируется в алфавитном порядке";
     private final static String updateDescription_4_26 = "Теперь при распечатывании квитанции можно выбрать формат бумаги (А4 или А5).\n";
     private final static String updateDescription_4_27 = "В раздел \"Материалы\" добавлен столбец \"Номер цвета\"";
+    private final static String updateDescription_4_28 = "Информация об обновлении 4.28:\nЧто-то где-то обновилось, но это не важно, всё равно никто не читает текст обновлений (кроме Любы), а просто жмут кнопку Окей. Ну а для тех кто все таки читает, вот вам несколько интерестных фактов о пандах:\nПанды залезают на деревья и умеют плавать. Окрас панды меняется от розового к чёрно-белому. Большие панды дни напролёт едят и спят. Помёт панды может достигать 28 кг в день! (это ж сколько говна в день). Большие панды любят одиночество. (конечно, с таким то количеством говна в день). Панды не впадают в спячку. (им некогда, они копят говно).";
+    private final static String updateDescription_5_1 = "В меню \"Светотехника\" добавлен раздел \"Светодиодные ленты.\"\n\n" +
+            "Пользовательские размеры окон программы (как главное окно, так и окна меню и подменю) теперь сохраняются локально.\n" +
+            "Ширина каждого столбца в таблицах программы (кроме главной таблицы и таблиц материалов) теперь тоже сохраняются локально, а значит можно настроить ширины столбцов в таблицах под себя и при следующем запуске программы эти ширины столбцов будут такие же как при закрытии программы. ";
 
     private final static List<Integer> _updatesList = Arrays.asList(
             36, 37, 38, 39, 40, 41, 42, 44, 45, 46, 48, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423,
-            424, 425, 426, 427);
+            424, 425, 426, 427, 428, 51);
 
     static String getUpdateDescription(final int vers)
     {
@@ -124,6 +128,12 @@ public class UpdateInfo
                 break;
             case 427:
                 updateDescription = updateDescription_4_27;
+                break;
+            case 428:
+                updateDescription = updateDescription_4_28;
+                break;
+            case 51:
+                updateDescription = updateDescription_5_1;
                 break;
             default:
                 updateDescription = "";
@@ -285,6 +295,18 @@ public class UpdateInfo
                     version = "4";
                 else
                     version = "27";
+                break;
+            case 428:
+                if (primary)
+                    version = "4";
+                else
+                    version = "28";
+                break;
+            case 51:
+                if (primary)
+                    version = "5";
+                else
+                    version = "1";
                 break;
             default:
                 version = "";

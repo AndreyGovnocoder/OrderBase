@@ -1,6 +1,4 @@
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -21,12 +19,13 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 class Print
 {
+    static double A4_WIDTH = 560;
+    static double A4_HALF_HEIGHT = 375;
     static TableView<OrderPosition> _positionsToPrintTableView;
     static TableView<OrderPosition> _orderPositionsTableView;
     static Stage _printStage;
@@ -37,6 +36,7 @@ class Print
     static private String _date = "";
     static private RadioButton formatA4RBtn = new RadioButton("A4");
     static private RadioButton formatA5RBtn = new RadioButton("A5");
+    static private TextField nameClientTextField = new TextField();
 
     static boolean toPrint(Order order, Stage primaryStage)
     {
@@ -84,8 +84,11 @@ class Print
         headGetClientLabel.setFont(Font.font("Calibri", FontWeight.BOLD, FontPosture.REGULAR, 14));
         headGetManagerLabel.setFont(Font.font("Calibri", FontWeight.BOLD, FontPosture.REGULAR, 14));
 
+        orderGridPane.setHgap(10);
         orderGridPane.add(headDateLabel, 0,0);
         orderGridPane.add(headClientLabel, 0,1);
+        if (Finder.getClient(order.get_client()).get_name().toLowerCase().equals("частное лицо"))
+            orderGridPane.add(nameClientTextField, 2, 1);
         orderGridPane.add(headManagerLabel,0,2);
         orderGridPane.add(headGetDateLabel,1,0);
         orderGridPane.add(headGetClientLabel, 1,1);
@@ -225,7 +228,8 @@ class Print
         formatA5RBtn.setOnAction(event -> Finder.setFormat(Finder.A5, formatA5RBtn.isSelected()));
 
         paperFormatHBox.setSpacing(20);
-        paperFormatHBox.getChildren().addAll(formatA4RBtn, formatA5RBtn);
+        //paperFormatHBox.getChildren().addAll(formatA4RBtn, formatA5RBtn);
+        paperFormatHBox.getChildren().addAll(formatA4RBtn);
 
         //paperFormatTitiledPane.setPadding(new Insets(10));
         paperFormatTitiledPane.setText("Используемый формат бумаги");
@@ -267,11 +271,11 @@ class Print
 
     private static void print(Order order)
     {
+
         String positionsString = "";
         for(OrderPosition position : _positionsToPrintTableView.getItems())
-        {
             positionsString += position.get_description() + "\n";
-        }
+
 
         _manager = "";
         _client = "";
@@ -279,6 +283,8 @@ class Print
 
         _manager = Finder.getStaff(order.get_manager()).get_name();
         _client = Finder.getClient(order.get_client()).get_name();
+        if (Finder.getClient(order.get_client()).get_name().toLowerCase().equals("частное лицо") && !nameClientTextField.getText().isEmpty())
+            _client += ": " + nameClientTextField.getText();
         _date = order.get_date().toLocalDate().format(MainInterface._formatter);
 
         BorderPane printBorderPane = new BorderPane();
@@ -293,44 +299,82 @@ class Print
         Label headSecondClientLabel = new Label(_client);
         Text manager = new Text("Менеджер: " + _manager + "\n\n");
         Text signature = new Text("Получатель: ________________________\n\n" +
-                "    Подпись: ________________________");
+                "    Подпись: _________________________");
         StackPane logoStackPane = new StackPane();
         StackPane bottom1StackPane = new StackPane();
         StackPane bottom2StackPane = new StackPane();
-        StackPane stackPane = new StackPane();
+        //StackPane stackPane = new StackPane();
         VBox topVBox = new VBox();
         HBox bottomHBox = new HBox();
         HBox headSecondHBox = new HBox();
         HBox mainDateHBox = new HBox();
+
+        VBox printVBox = new VBox();
+        printVBox.setAlignment(Pos.TOP_LEFT);
+        //printVBox.setStyle("-fx-border-color: yellow");
+
         PrinterJob printerJob = PrinterJob.createPrinterJob();
         Printer printer = printerJob.getPrinter();
         JobSettings jobSettings = printerJob.getJobSettings();
-        PageLayout pageLayout = jobSettings.getPageLayout();
+        PageLayout pageLayout;
 
         if (Finder._isFormatA4)
         {
             pageLayout = printer.createPageLayout(
                     Paper.A4,
                     PageOrientation.PORTRAIT,
-                    Printer.MarginType.EQUAL);
-            printBorderPane.setPrefWidth(pageLayout.getPrintableWidth()-5);
-            printBorderPane.setPrefHeight(pageLayout.getPrintableHeight()-5);
-            printBorderPane.setMinHeight(pageLayout.getPrintableHeight()/2 - 5);
-            printBorderPane.setMaxHeight(pageLayout.getPrintableHeight()/2 - 5);
+                    0,0,0,0);
+            //printBorderPane.setPrefWidth(pageLayout.getPrintableWidth()-10);
+            //printBorderPane.setPrefHeight(pageLayout.getPrintableHeight()-10);
+            //printBorderPane.setMinHeight(pageLayout.getPrintableHeight()/2 - 5);
+            //printBorderPane.setMaxHeight(pageLayout.getPrintableHeight()/2 - 5);
+
         }
         else
         {
-            pageLayout = printer.createPageLayout(
+
+            pageLayout = printerJob.getPrinter().createPageLayout(
                     Paper.A5,
                     PageOrientation.LANDSCAPE,
-                    Printer.MarginType.EQUAL);
-
+                    0,0,0,0);
+            //printBorderPane.setPrefSize(796.70020500003, 561.48395400002);
+            /*
             printBorderPane.setPrefWidth(pageLayout.getPrintableWidth()-10);
             printBorderPane.setPrefHeight(pageLayout.getPrintableHeight()-10);
             printBorderPane.setMinHeight(pageLayout.getPrintableHeight() - 10);
             printBorderPane.setMaxHeight(pageLayout.getPrintableHeight() - 10);
+            printBorderPane.setMinWidth(pageLayout.getPrintableHeight() - 10);
+            printBorderPane.setMaxWidth(pageLayout.getPrintableHeight() - 10);
+*/
+
         }
-        //printBorderPane.setStyle("-fx-border-color: black");
+        //printBorderPane.setStyle("-fx-border-color: red");
+        if (Finder.isFormatA5())
+        {
+            //stackPane.setMinSize(797, 561);
+            //printBorderPane.setMinSize(797, 561);
+            System.out.println("margins: " +
+                    "top: " + pageLayout.getTopMargin() +
+                    "left: " + pageLayout.getLeftMargin());
+        }
+        else
+        {
+            //printBorderPane.setPrefWidth(pageLayout.getPrintableWidth()-100);
+            printVBox.setMaxWidth(A4_WIDTH);
+            printVBox.setMinWidth(A4_WIDTH);
+            printVBox.setPrefWidth(A4_WIDTH);
+            printVBox.setMaxHeight(A4_HALF_HEIGHT);
+            printVBox.setMinHeight(A4_HALF_HEIGHT);
+            printVBox.setPrefHeight(A4_HALF_HEIGHT);
+            printBorderPane.setMaxWidth(A4_WIDTH);
+            printBorderPane.setMinWidth(A4_WIDTH);
+            printBorderPane.setPrefWidth(A4_WIDTH);
+            printBorderPane.setMaxHeight(A4_HALF_HEIGHT);
+            printBorderPane.setMinHeight(A4_HALF_HEIGHT);
+            printBorderPane.setPrefHeight(A4_HALF_HEIGHT);
+        }
+
+
 
         ColumnConstraints numberCol = new ColumnConstraints();
         numberCol.setPercentWidth(4);
@@ -342,9 +386,14 @@ class Print
 
         printGridPane.setGridLinesVisible(true);
         printGridPane.alignmentProperty().set(Pos.TOP_CENTER);
-        printGridPane.setPrefWidth(printBorderPane.getPrefWidth()-20);
-        printGridPane.setMinWidth(printBorderPane.getPrefWidth()-20);
-        printGridPane.setMaxWidth(printBorderPane.getPrefWidth()-20);
+
+        printGridPane.setPadding(new Insets(10, 10,0,10));
+
+        //printGridPane.setPrefWidth(pageLayout.getPrintableWidth());
+        //printGridPane.setMinWidth(pageLayout.getPrintableWidth());
+        //printGridPane.setMaxWidth(pageLayout.getPrintableWidth());
+        //printGridPane.setStyle("-fx-border-color: blue");
+
         printGridPane.getColumnConstraints().addAll(numberCol, descriptionCol, quantityCol);
         printGridPane.getRowConstraints().addAll(rowHead);
         printGridPane.add(numberText, 0,0);
@@ -422,16 +471,16 @@ class Print
 
         bottom1StackPane.getChildren().addAll(manager);
         bottom1StackPane.setAlignment(Pos.BOTTOM_LEFT);
-        bottom1StackPane.setPrefWidth(printBorderPane.getPrefWidth()/2-20);
-        bottom1StackPane.setMinWidth(printBorderPane.getPrefWidth()/2-20);
-        bottom1StackPane.setMaxWidth(printBorderPane.getPrefWidth()/2-20);
+        bottom1StackPane.setPrefWidth(printBorderPane.getPrefWidth()/2);
+        bottom1StackPane.setMinWidth(printBorderPane.getPrefWidth()/2);
+        bottom1StackPane.setMaxWidth(printBorderPane.getPrefWidth()/2);
         bottom2StackPane.getChildren().addAll(signature);
         bottom2StackPane.setAlignment(Pos.BOTTOM_RIGHT);
-        bottom2StackPane.setPrefWidth(printBorderPane.getPrefWidth()/2-20);
-        bottom2StackPane.setMinWidth(printBorderPane.getPrefWidth()/2-20);
-        bottom2StackPane.setMaxWidth(printBorderPane.getPrefWidth()/2-20);
+        bottom2StackPane.setPrefWidth(printBorderPane.getPrefWidth()/2);
+        bottom2StackPane.setMinWidth(printBorderPane.getPrefWidth()/2);
+        bottom2StackPane.setMaxWidth(printBorderPane.getPrefWidth()/2);
 
-        bottomHBox.setPadding(new Insets(20));
+        bottomHBox.setPadding(new Insets(10,0,10,0));
         bottomHBox.setPrefWidth(printBorderPane.getPrefWidth());
         bottomHBox.getChildren().addAll(bottom1StackPane, bottom2StackPane);
 
@@ -442,20 +491,24 @@ class Print
 
         headMainHBox.getChildren().addAll(headTextVBox, logoStackPane);
 
-        topVBox.setPadding(new Insets(20));
+        topVBox.setPadding(new Insets(0,0,0,0));
         topVBox.getChildren().addAll(headMainHBox, headSecondHBox);
 
         printBorderPane.setTop(topVBox);
         printBorderPane.setCenter(printGridPane);
         printBorderPane.setBottom(bottomHBox);
+        BorderPane.setAlignment(printGridPane, Pos.TOP_LEFT);
 
-        stackPane.setPrefWidth(pageLayout.getPrintableWidth());
-        stackPane.setPrefHeight(pageLayout.getPrintableHeight()/2);
-        stackPane.setAlignment(Pos.CENTER);
-        stackPane.getChildren().addAll(printBorderPane);
+
+        //stackPane.setAlignment(Pos.TOP_LEFT);
+        //stackPane.getChildren().addAll(printBorderPane);
+        //stackPane.setStyle("-fx-border-color: yellow");
 
         double scaleX = pageLayout.getPrintableWidth();
         double scaleY = pageLayout.getPrintableHeight();
+        System.out.println("width " + printBorderPane.getWidth());
+        System.out.println("height " + printBorderPane.getHeight());
+        System.out.println("a5rButt: " + formatA5RBtn.isDisable());
 
         jobSettings.setPageLayout(pageLayout);
 
@@ -463,12 +516,12 @@ class Print
             return;
 
         boolean proceed = printerJob.showPrintDialog(_printStage);
-        //boolean pageSetup = printerJob.showPageSetupDialog(stagePrint);
-
+        //boolean pageSetup = printerJob.showPageSetupDialog(_printStage);
+        printVBox.getChildren().addAll(printBorderPane);
         if(proceed)
         {
             System.out.println("proceed");
-            boolean printed = printerJob.printPage(stackPane);
+            boolean printed = printerJob.printPage(printVBox);
             if(printed)
             {
                 System.out.println("printed");
@@ -485,7 +538,11 @@ class Print
                     receipt.set_date(_date);
                     receipt.set_client(_client);
                     if(DataBase.addReceipt(receipt))
+                    {
+                        receipt.set_id(DataBase.getLastId(DataBase.RECEIPTS_TABLE));
                         System.out.println("квитанция добавлена в бд");
+                        Finder.get_allReceipts().add(receipt);
+                    }
                 }
 
                 _printStage.close();

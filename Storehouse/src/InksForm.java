@@ -25,6 +25,7 @@ import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Properties;
 
 public class InksForm
 {
@@ -79,11 +80,17 @@ public class InksForm
         _mainBorderPane.setBottom(getBottom());
 
         //_inksFormStage.setOnCloseRequest(event -> DataBaseStorehouse.closeConnection());
+        _inksFormStage.setOnCloseRequest(event ->
+        {
+            saveInkStageSize(_inksFormStage);
+            saveInkAccTableColsWidth();
+        });
         _inksFormStage.initModality(Modality.WINDOW_MODAL);
         _inksFormStage.initOwner(primaryStage);
         _inksFormStage.setScene(_inksFormScene);
         _inksFormStage.setTitle("Чернила");
         _inksFormStage.getIcons().add(MainInterface.getIconLogo());
+        loadInkStageSize(_inksFormStage);
         _inksFormStage.showAndWait();
     }
 
@@ -641,7 +648,12 @@ public class InksForm
         if (get_currAccount() == 7) calcConsumptionBtn.setVisible(true);
 
         closeButton.setPrefWidth(80);
-        closeButton.setOnAction(event -> _inksFormStage.close());
+        closeButton.setOnAction(event ->
+        {
+            saveInkStageSize(_inksFormStage);
+            saveInkAccTableColsWidth();
+            _inksFormStage.close();
+        });
 
         bottomAnchorPane.getChildren().addAll(calcConsumptionBtn, closeButton);
         AnchorPane.setTopAnchor(calcConsumptionBtn, 5.0);
@@ -684,6 +696,8 @@ public class InksForm
         inputAmountDialog.setHeaderText("Введите количество чернил в таре (шт.)");
         inputAmountDialog.setContentText("Количество (шт.): ");
         inputAmountDialog.graphicProperty().set(null);
+        Stage alertStage = (Stage) inputAmountDialog.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(MainInterface.getIconLogo());
         inputAmountDialog.getEditor().textProperty().addListener(
                 MaterialsForm.getChangeListener(inputAmountDialog.getEditor()));
         Optional<String> result = inputAmountDialog.showAndWait();
@@ -765,7 +779,7 @@ public class InksForm
         TableColumn<InkAccounting, Integer> quantityCol = new TableColumn<>("Количество");
 
         dateCol.setStyle("-fx-alignment: CENTER;");
-        dateCol.prefWidthProperty().bind(_inksFormScene.widthProperty().multiply(0.202));
+        //dateCol.prefWidthProperty().bind(_inksFormScene.widthProperty().multiply(0.202));
         dateCol.setCellValueFactory(new PropertyValueFactory<>("_dateTime"));
         dateCol.setCellFactory(tc -> new TableCell<InkAccounting, LocalDateTime>()
         {
@@ -789,17 +803,18 @@ public class InksForm
         });
 
         procedureCol.setStyle("-fx-alignment: CENTER;");
-        procedureCol.prefWidthProperty().bind(_inksFormScene.widthProperty().multiply(0.18));
+        //procedureCol.prefWidthProperty().bind(_inksFormScene.widthProperty().multiply(0.18));
         procedureCol.setCellValueFactory(new PropertyValueFactory<>("_procedure"));
 
         quantityCol.setStyle("-fx-alignment: CENTER;");
-        quantityCol.prefWidthProperty().bind(_inksFormScene.widthProperty().multiply(0.10));
+        //quantityCol.prefWidthProperty().bind(_inksFormScene.widthProperty().multiply(0.10));
         quantityCol.setCellValueFactory(new PropertyValueFactory<>("_quantity"));
 
         colorCol.getColumns().addAll(dateCol, procedureCol, quantityCol);
 
         _inkAccountingsTableView.getColumns().addAll(colorCol);
         _inkAccountingsTableView.setPlaceholder(new Text("Выберите принтер для отображения данных по чернилам"));
+        loadInkAccTableColsWidth();
     }
 
     private void setItemsInkAccountingsTableView(Ink ink)
@@ -877,18 +892,76 @@ public class InksForm
 
     public int get_currAccount() { return _currAccount; }
 
-    /*static Machine getMachine(int machineId)
+    private void saveInkAccTableColsWidth()
     {
-        for(Machine machine : _allMachinesArrayList)
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_inkAccountingsTableView");
+        if (tableColumnsWidthProp == null)
         {
-            System.out.println("machine =" + machine.get_name());
-            System.out.println("id: " + machine.get_id() + " == machineId: " + machineId);
-            if (machine.get_id() == machineId)
-                return machine;
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _inkAccountingsTableView.getColumns().get(0).getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _inkAccountingsTableView.getColumns().get(0).getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_inkAccountingsTableView", tableColumnsWidthProp);
         }
-
-        return new Machine();
+        else
+        {
+            for (int i = 0; i < _inkAccountingsTableView.getColumns().get(0).getColumns().size(); ++i)
+                tableColumnsWidthProp.put(String.valueOf(i), _inkAccountingsTableView.getColumns().get(0).getColumns().get(i).getWidth());
+        }
     }
 
-    */
+    private void loadInkAccTableColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_inkAccountingsTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                _inkAccountingsTableView.getColumns().get(0).getColumns().get(1).setPrefWidth(40);
+                for (int i = 0; i < _inkAccountingsTableView.getColumns().get(0).getColumns().size(); ++i)
+                {
+                    _inkAccountingsTableView.getColumns().get(0).getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+    private void saveInkStageSize(Stage inkStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("inkStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", inkStage.getWidth());
+            propertiesStageSizes.put("height", inkStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("inkStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", inkStage.getWidth());
+            propertiesStageSizes.put("height", inkStage.getHeight());
+        }
+    }
+
+    private void loadInkStageSize(Stage inkStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("inkStage");
+            if (properties != null && properties.size() > 0)
+            {
+                inkStage.setWidth((double)properties.get("width"));
+                inkStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
 }

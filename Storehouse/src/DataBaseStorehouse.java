@@ -39,6 +39,10 @@ public class DataBaseStorehouse
     static final String REQUESTS_TABLE = "requests";
     static final String REQUESTS_STATUS_TABLE = "requestStatus";
     static final String REQUESTS_KINDS_TABLE = "requestKinds";
+    static final String LEDSTRIP_ACCOUNTINGS_TABLE = "ledStripAccounting";
+    static final String LEDSTRIP_DEGPROTECT_TABLE = "ledStripDegProtections";
+    static final String LEDSTRIPS_TABLE = "ledStrips";
+    static final String LEDSTRIP_TYPES_TABLE = "ledStripTypes";
 
     static void closePrRsAndConnection(PreparedStatement pr, ResultSet rs, Connection conn)
     {
@@ -2402,5 +2406,263 @@ public class DataBaseStorehouse
         }
 
         return true;
+    }
+
+    static boolean addLedStrip(LedStrip newLedStrip)
+    {
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("INSERT INTO " +
+                    LEDSTRIPS_TABLE +
+                    "(quantityAndType, powerConsump, lumFlux, colorfulTemper, color, degProtection," +
+                    "quantity, price, active) " +
+                    " VALUES (?,?,?,?,?,?,?,?,?)");
+            pr.setInt(1, newLedStrip.get_quantityAndType());
+            pr.setString(2, newLedStrip.get_powerConsump());
+            pr.setInt(3, newLedStrip.get_lumFlux());
+            pr.setString(4, newLedStrip.get_colorfulTemper());
+            pr.setString(5, newLedStrip.get_color());
+            pr.setInt(6, newLedStrip.get_degProtection());
+            pr.setInt(7, newLedStrip.get_quantity());
+            pr.setDouble(8, newLedStrip.get_price());
+            pr.setBoolean(9, true);
+            pr.execute();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+
+        return true;
+    }
+
+    static boolean editLedStrip(LedStrip ledStrip)
+    {
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("UPDATE " +
+                    LEDSTRIPS_TABLE +
+                    " SET quantityAndType=?, powerConsump=?, lumFlux=?, colorfulTemper=?, color=?, " +
+                    "degProtection=?, quantity=?, price=?, active=? " +
+                    " WHERE _id = " + ledStrip.get_id());
+            pr.setInt(1, ledStrip.get_quantityAndType());
+            pr.setString(2, ledStrip.get_powerConsump());
+            pr.setInt(3, ledStrip.get_lumFlux());
+            pr.setString(4, ledStrip.get_colorfulTemper());
+            pr.setString(5, ledStrip.get_color());
+            pr.setInt(6, ledStrip.get_degProtection());
+            pr.setInt(7, ledStrip.get_quantity());
+            pr.setDouble(8, ledStrip.get_price());
+            pr.setBoolean(9, ledStrip.is_active());
+            pr.executeUpdate();
+        } catch (SQLException e)
+        {
+            System.out.println("Ошибка SQL");
+            e.printStackTrace();
+            return false;
+        } catch (Exception ex){
+            System.out.println("Ошибка соединения");
+            return false;
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+
+        return true;
+    }
+
+    static boolean deleteLedStrip(int ledStripId)
+    {
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("DELETE FROM " +
+                    LEDSTRIPS_TABLE +
+                    " WHERE _id = " + ledStripId);
+            pr.executeUpdate();
+        } catch (SQLException e){
+            System.out.println("Ошибка SQL");
+            e.printStackTrace();
+            return false;
+        } catch (Exception ex){
+            System.out.println("Ошибка соединения");
+            return false;
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+
+        return true;
+    }
+
+    static ArrayList<LedStrip> getLedStripsArrayList()
+    {
+        ArrayList<LedStrip> ledStripArrayList = new ArrayList<>();
+
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("SELECT " +
+                    "_id, quantityAndType, powerConsump, lumFlux, colorfulTemper, color, " +
+                    "degProtection, quantity, price, active" +
+                    " FROM " +  LEDSTRIPS_TABLE);
+            rs = pr.executeQuery();
+            while (rs.next())
+            {
+                LedStrip ledStrip = new LedStrip();
+                ledStrip.set_id(rs.getInt(1));
+                ledStrip.set_quantityAndType(rs.getInt(2));
+                ledStrip.set_powerConsump(rs.getString(3));
+                ledStrip.set_lumFlux(rs.getInt(4));
+                ledStrip.set_colorfulTemper(rs.getString(5));
+                ledStrip.set_color(rs.getString(6));
+                ledStrip.set_degProtection(rs.getInt(7));
+                ledStrip.set_quantity(rs.getInt(8));
+                ledStrip.set_price(rs.getDouble(9));
+                ledStrip.set_active(rs.getBoolean(10));
+
+                ledStripArrayList.add(ledStrip);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+        return ledStripArrayList;
+    }
+
+    static boolean addLedStripAccounting(LedStripAccounting accounting)
+    {
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("INSERT INTO " +
+                    LEDSTRIP_ACCOUNTINGS_TABLE +
+                    "(ledStripId, accountId, quantity, procedure, dateTime, remark) " +
+                    " VALUES (?,?,?,?,?,?)");
+            pr.setInt(1, accounting.get_ledStripId());
+            pr.setInt(2, accounting.get_accountId());
+            pr.setInt(3, accounting.get_quantity());
+            pr.setString(4, accounting.get_procedure());
+            pr.setObject(5, accounting.get_dateTime());
+            pr.setString(6, accounting.get_remark());
+            pr.execute();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+
+        return true;
+    }
+
+    static boolean editLedStripAccounting(LedStripAccounting accounting)
+    {
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("UPDATE " +
+                    LEDSTRIP_ACCOUNTINGS_TABLE +
+                    " SET ledStripId=?, accountId=?, quantity=?, procedure=?, dateTime=?, remark=?" +
+                    " WHERE _id = "+ accounting.get_id());
+            pr.setInt(1, accounting.get_ledStripId());
+            pr.setInt(2, accounting.get_accountId());
+            pr.setInt(3, accounting.get_quantity());
+            pr.setString(4, accounting.get_procedure());
+            pr.setObject(5, accounting.get_dateTime());
+            pr.setString(6, accounting.get_remark());
+            pr.executeUpdate();
+        } catch (SQLException e)
+        {
+            System.out.println("Ошибка SQL");
+            e.printStackTrace();
+            return false;
+        } catch (Exception ex){
+            System.out.println("Ошибка соединения");
+            return false;
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+
+        return true;
+    }
+
+    static ArrayList<LedStripAccounting> getLedStripAccountingList()
+    {
+        ArrayList<LedStripAccounting> accountingArrayList = new ArrayList<>();
+        String[] dateTime = null;
+        Date date = null;
+        String[] timeArr = null;
+        LocalTime localTime = null;
+
+        PreparedStatement pr = null;
+        ResultSet rs = null;
+        Connection connection = null;
+        try
+        {
+            connection = DriverManager.getConnection(DB_URL);
+            pr = connection.prepareStatement("SELECT " +
+                    "_id, ledStripId, accountId, quantity, procedure, dateTime, remark" +
+                    " FROM " +  LEDSTRIP_ACCOUNTINGS_TABLE + " ORDER BY dateTime");
+            rs = pr.executeQuery();
+            while (rs.next())
+            {
+                LedStripAccounting accounting = new LedStripAccounting();
+                accounting.set_id(rs.getInt(1));
+                accounting.set_ledStripId(rs.getInt(2));
+                accounting.set_accountId(rs.getInt(3));
+                accounting.set_quantity(rs.getInt(4));
+                accounting.set_procedure(rs.getString(5));
+
+                dateTime = rs.getObject(6).toString().split("T");
+                date = Date.valueOf(dateTime[0]);
+                timeArr = dateTime[1].split(":");
+                localTime = LocalTime.of(Integer.parseInt(timeArr[0]), Integer.parseInt(timeArr[1]), 0);
+                accounting.set_dateTime(LocalDateTime.of(date.toLocalDate(), localTime));
+                accounting.set_remark(rs.getString(7));
+                accountingArrayList.add(accounting);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        } finally
+        {
+            closePrRsAndConnection(pr, rs, connection);
+        }
+
+        return accountingArrayList;
     }
 }

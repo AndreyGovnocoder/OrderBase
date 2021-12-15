@@ -16,6 +16,7 @@ import javafx.util.Callback;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
@@ -111,9 +112,12 @@ class MaterialsForm
         _materialsFormStage.setScene(_materialsFormScene);
         _materialsFormStage.setOnCloseRequest(event ->
         {
+            saveMaterialsStageSize(_materialsFormStage);
             saveColumnsPosition();
             //DataBaseStorehouse.closeConnection();
         });
+
+        loadMaterialsStageSize(_materialsFormStage);
         _materialsFormStage.showAndWait();
     }
 
@@ -170,6 +174,7 @@ class MaterialsForm
 
         closeBtn.setOnAction(event ->
         {
+            saveMaterialsStageSize(_materialsFormStage);
             saveColumnsPosition();
             _materialsFormStage.close();
         });
@@ -1967,4 +1972,37 @@ class MaterialsForm
         return _activeMaterialsList;
     }
 
+    private void saveMaterialsStageSize(Stage materialsStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("materialsStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", materialsStage.getWidth());
+            propertiesStageSizes.put("height", materialsStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("materialsStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", materialsStage.getWidth());
+            propertiesStageSizes.put("height", materialsStage.getHeight());
+        }
+    }
+
+    private void loadMaterialsStageSize(Stage materialsStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("materialsStage");
+            if (properties != null && properties.size() > 0)
+            {
+                materialsStage.setWidth((double)properties.get("width"));
+                materialsStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
 }

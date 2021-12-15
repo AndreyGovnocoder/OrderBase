@@ -22,6 +22,7 @@ import javafx.util.Callback;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class RequestsForm
 {
@@ -63,6 +64,12 @@ public class RequestsForm
         _requestFormStage.setScene(_requestFormScene);
         _requestFormStage.setTitle("Заявки");
         _requestFormStage.getIcons().add(MainInterface.getIconLogo());
+        _requestFormStage.setOnCloseRequest(event ->
+        {
+            saveRequestsTableColsWidth();
+            saveRequestsStageSize(_requestFormStage);
+        });
+        loadRequestsStageSize(_requestFormStage);
         _requestFormStage.showAndWait();
     }
 
@@ -126,7 +133,12 @@ public class RequestsForm
         Button closeButton = new Button("Закрыть");
 
         closeButton.setPrefWidth(80);
-        closeButton.setOnAction(event ->_requestFormStage.close());
+        closeButton.setOnAction(event ->
+        {
+            saveRequestsTableColsWidth();
+            saveRequestsStageSize(_requestFormStage);
+            _requestFormStage.close();
+        });
 
         bottomAnchorPane.getChildren().addAll(closeButton, _notShowDeliveredCheckBox);
         AnchorPane.setTopAnchor(closeButton, 5.0);
@@ -144,7 +156,7 @@ public class RequestsForm
     {
         TableColumn<Request, LocalDateTime> dateCol = new TableColumn<>("Дата");
         dateCol.setStyle("-fx-alignment: CENTER;");
-        dateCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.086));
+        //dateCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.086));
         dateCol.setCellValueFactory(new PropertyValueFactory<>("_dateTime"));
         dateCol.setCellFactory(tc -> new TableCell<Request, LocalDateTime>()
         {
@@ -179,7 +191,7 @@ public class RequestsForm
 
         TableColumn<Request, Integer> kindCol = new TableColumn<>("Вид");
         kindCol.setCellValueFactory(new PropertyValueFactory<>("_kind"));
-        kindCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.1));
+        //kindCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.1));
         kindCol.setStyle("-fx-alignment: CENTER;");
         kindCol.setCellFactory(tc -> new TableCell<Request, Integer>()
         {
@@ -202,7 +214,7 @@ public class RequestsForm
         TableColumn<Request, Integer> nameCol = new TableColumn<>("Название");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("_valueId"));
         nameCol.setStyle("-fx-alignment: CENTER;");
-        nameCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.44));
+        //nameCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.44));
         nameCol.setCellFactory(tc -> new TableCell<>()
         {
             int kindId = -1;
@@ -268,7 +280,7 @@ public class RequestsForm
         TableColumn<Request, String> descriptionCol = new TableColumn<>("Описание");
         descriptionCol.setCellValueFactory(new PropertyValueFactory<>("_description"));
         descriptionCol.setStyle("-fx-alignment: CENTER;");
-        descriptionCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.2));
+        //descriptionCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.2));
         descriptionCol.setCellFactory(tc -> new TableCell<>()
         {
             private Text text;
@@ -302,7 +314,7 @@ public class RequestsForm
         TableColumn<Request, Integer> statusCol = new TableColumn<>("Статус");
         statusCol.setCellValueFactory(new PropertyValueFactory<>("_status"));
         statusCol.setStyle("-fx-alignment: CENTER;");
-        statusCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.12));
+        //statusCol.prefWidthProperty().bind(_requestFormScene.widthProperty().multiply(0.12));
         statusCol.setCellFactory(tc -> new TableCell<Request, Integer>()
         {
             @Override
@@ -473,6 +485,7 @@ public class RequestsForm
         _requestTableView.setPlaceholder(new Text("Заявки отсутствуют"));
         setRequestTableViewItems(_toSortComboBox.getValue().get_id());
         _requestTableView.scrollTo(_requestTableView.getItems().size()-1);
+        loadRequestsTableColsWidth();
     }
 
     void setRequestTableViewItems(final int kind)
@@ -634,4 +647,79 @@ public class RequestsForm
 
     }
 
+    private void saveRequestsTableColsWidth()
+    {
+        Properties tableColumnsWidthProp =
+                Finder._settings.getPropertiesTableColumsWidth("_requestTableView");
+        if (tableColumnsWidthProp == null)
+        {
+            tableColumnsWidthProp = new Properties();
+            for (int i = 0; i < _requestTableView.getColumns().size(); ++i)
+            {
+                tableColumnsWidthProp.put(String.valueOf(i), _requestTableView.getColumns().get(i).getWidth());
+            }
+            Finder._settings.addPropertiesColWidths("_requestTableView", tableColumnsWidthProp);
+        }
+        else
+        {
+            for (int i = 0; i < _requestTableView.getColumns().size(); ++i)
+                tableColumnsWidthProp.put(String.valueOf(i), _requestTableView.getColumns().get(i).getWidth());
+        }
+    }
+
+    private void loadRequestsTableColsWidth()
+    {
+        try
+        {
+            Properties tableProperties = Finder._settings.getPropertiesTableColumsWidth("_requestTableView");
+            if (tableProperties != null && tableProperties.size() > 0)
+            {
+                for (int i = 0; i < _requestTableView.getColumns().size(); ++i)
+                {
+                    //System.out.println("col " + i + ": " + (double)tableProperties.get(String.valueOf(i)));
+                    _requestTableView.getColumns().get(i).setPrefWidth((double)tableProperties.get(String.valueOf(i)));
+                }
+            }
+            else
+                _requestTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
+
+
+    private void saveRequestsStageSize(Stage requestsStage)
+    {
+        Properties propertiesStageSizes =
+                Finder._settings.getPropertiesStageSizes("requestsStage");
+        if (propertiesStageSizes == null)
+        {
+            propertiesStageSizes = new Properties();
+            propertiesStageSizes.put("width", requestsStage.getWidth());
+            propertiesStageSizes.put("height", requestsStage.getHeight());
+            Finder._settings.addPropertiesStageSizes("requestsStage", propertiesStageSizes);
+        } else
+        {
+            propertiesStageSizes.put("width", requestsStage.getWidth());
+            propertiesStageSizes.put("height", requestsStage.getHeight());
+        }
+    }
+
+    private void loadRequestsStageSize(Stage requestsStage)
+    {
+        try
+        {
+            Properties properties = Finder._settings.getPropertiesStageSizes("requestsStage");
+            if (properties != null && properties.size() > 0)
+            {
+                requestsStage.setWidth((double)properties.get("width"));
+                requestsStage.setHeight((double)properties.get("height"));
+            }
+
+        }catch (Exception ex)
+        {
+            System.out.println("Ошибка загрузки настроек\n" + ex.toString());
+        }
+    }
 }
